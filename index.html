@@ -1,0 +1,4443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2026 Integration Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 1%;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 3% 1%;
+            border-radius: 8px;
+            margin-bottom: 1%;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            text-align: center;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 2%;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1%;
+            margin-bottom: 1%;
+            overflow-x: auto;
+            padding: 1%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 2% 3%;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-color: #6366f1;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 8px;
+            padding: 3%;
+            margin-bottom: 1%;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2%;
+            padding-bottom: 2%;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #a5b4fc;
+            display: flex;
+            align-items: center;
+            gap: 2%;
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: #fff;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .card-content {
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: #e0e0e0;
+        }
+
+        .card-content p {
+            margin-bottom: 2%;
+        }
+
+        .highlight {
+            background: rgba(99, 102, 241, 0.2);
+            padding: 2%;
+            border-radius: 6px;
+            border-left: 3px solid #6366f1;
+            margin: 2% 0;
+            font-size: 0.75rem;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1%;
+            margin-top: 2%;
+        }
+
+        .tech-item {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 3%;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.75rem;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .tech-item strong {
+            color: #a5b4fc;
+            display: block;
+            margin-bottom: 1%;
+        }
+
+        .workflow-step {
+            display: flex;
+            gap: 2%;
+            margin-bottom: 2%;
+            align-items: flex-start;
+        }
+
+        .workflow-arrow {
+            color: #6366f1;
+            font-size: 1.2rem;
+            margin-top: 1%;
+        }
+
+        ul {
+            margin-left: 4%;
+            margin-top: 2%;
+        }
+
+        li {
+            margin-bottom: 1.5%;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .integration-list {
+            display: grid;
+            gap: 1%;
+            margin-top: 2%;
+        }
+
+        .integration-item {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 2.5%;
+            border-radius: 6px;
+            border-left: 3px solid #8b5cf6;
+            font-size: 0.75rem;
+        }
+
+        .integration-item strong {
+            color: #c4b5fd;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3%;
+            padding: 3%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 1% 3%;
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2%;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            color: #a5b4fc;
+            overflow-x: auto;
+            margin: 2% 0;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1rem;
+            }
+            
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 2026 Integration Management</h1>
+            <div class="subtitle">AI Automation for SaaS Companies</div>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="openTab('overview')">Overview</button>
+            <button class="tab-btn" onclick="openTab('beginners')">Beginners</button>
+            <button class="tab-btn" onclick="openTab('tutorials')">Tutorials</button>
+            <button class="tab-btn" onclick="openTab('templates')">Templates</button>
+            <button class="tab-btn" onclick="openTab('builder')">Builder</button>
+            <button class="tab-btn" onclick="openTab('advanced')">Advanced</button>
+            <button class="tab-btn" onclick="openTab('setup')">Setup</button>
+            <button class="tab-btn" onclick="openTab('automation')">AI Automation</button>
+            <button class="tab-btn" onclick="openTab('platforms')">Platforms</button>
+            <button class="tab-btn" onclick="openTab('best-practices')">Best Practices</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🎯</span>
+                        What is Integration Management?
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p>Integration management is the strategic process of connecting different software systems, applications, and data sources to work together seamlessly. For SaaS companies in 2026, it's essential for:</p>
+                    <ul>
+                        <li>Automating data flow between platforms</li>
+                        <li>Eliminating manual data entry and errors</li>
+                        <li>Enabling real-time synchronization</li>
+                        <li>Scaling operations efficiently</li>
+                        <li>Providing unified customer experiences</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">⚡</span>
+                        Why AI Automation Matters
+                    </div>
+                    <span class="status-badge">2026 Essential</span>
+                </div>
+                <div class="card-content">
+                    <p>AI-powered integration management transforms traditional workflows by:</p>
+                    <div class="highlight">
+                        <strong>🧠 Intelligent Data Mapping:</strong> AI automatically identifies and maps data fields between systems without manual configuration
+                    </div>
+                    <div class="highlight">
+                        <strong>🔍 Anomaly Detection:</strong> Machine learning identifies integration errors and data inconsistencies in real-time
+                    </div>
+                    <div class="highlight">
+                        <strong>🎨 Predictive Scaling:</strong> AI predicts integration load and auto-scales resources
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">📊</span>
+                        Key Metrics to Track
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="tech-grid">
+                        <div class="tech-item">
+                            <strong>99.9%</strong>
+                            Uptime Target
+                        </div>
+                        <div class="tech-item">
+                            <strong>&lt;2s</strong>
+                            Sync Latency
+                        </div>
+                        <div class="tech-item">
+                            <strong>100K+</strong>
+                            Daily Transactions
+                        </div>
+                        <div class="tech-item">
+                            <strong>0.01%</strong>
+                            Error Rate
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Beginners Guide Tab -->
+        <div id="beginners" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">📚</span>
+                        What is an API?
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Simple Explanation:</strong></p>
+                    <p>An API (Application Programming Interface) is like a waiter in a restaurant. You (one app) tell the waiter (API) what you want, the waiter goes to the kitchen (another app), gets your order, and brings it back to you.</p>
+                    
+                    <div class="highlight">
+                        <strong>Real Example:</strong><br>
+                        When you click "Sign in with Google" on a website, that website's API talks to Google's API to verify your identity. You don't give your password to the website - the APIs handle it securely.
+                    </div>
+
+                    <p style="margin-top: 3%;"><strong style="color: #a5b4fc;">Why APIs Matter for Integration:</strong></p>
+                    <ul>
+                        <li>They allow apps to share data automatically</li>
+                        <li>No manual copy-pasting needed</li>
+                        <li>Updates happen in real-time</li>
+                        <li>Data stays synchronized across all tools</li>
+                    </ul>
+
+                    <div class="code-block">
+Example: When someone buys from Shopify
+→ API sends order to QuickBooks
+→ API creates customer in Mailchimp
+→ API logs sale in Google Sheets
+All happens in seconds, automatically!</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🔤</span>
+                        Integration Terms Glossary
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="integration-item">
+                        <strong>Integration</strong>
+                        <p>Connecting two or more apps so they work together and share information automatically.</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Webhook</strong>
+                        <p>A notification one app sends to another when something happens. Like a text message between apps saying "Hey, something just happened!"</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>API Key</strong>
+                        <p>A secret password that lets one app access another. Think of it as your apartment key - only people with the key can get in.</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>OAuth</strong>
+                        <p>A secure way to give one app permission to access another without sharing your password. Like giving a valet the car key, not your house keys.</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Endpoint</strong>
+                        <p>A specific URL where an API lives. Like a specific address where you send mail to get a response.</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Payload</strong>
+                        <p>The actual data being sent between apps. If the API is the envelope, the payload is the letter inside.</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Rate Limit</strong>
+                        <p>How many times you can use an API per hour/day. Like a "you can only call customer service 100 times per day" rule.</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>JSON</strong>
+                        <p>A format for organizing data that APIs understand. It's like a structured form with labeled fields.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🎯</span>
+                        Integration Basics Explained
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">How Integrations Actually Work:</strong></p>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Trigger</strong>
+                            <p>Something happens in App A (new customer, form submission, payment received)</p>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Action</strong>
+                            <p>App A sends data to the integration platform or directly to App B</p>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Processing</strong>
+                            <p>Data gets formatted, validated, and transformed if needed</p>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Result</strong>
+                            <p>App B receives the data and does something with it (creates record, sends email, etc.)</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight" style="margin-top: 3%;">
+                        <strong>Visual Example:</strong><br>
+                        New Stripe Payment → Zapier catches it → Formats customer data → Creates contact in HubSpot → Sends welcome email via Mailchimp
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🚀</span>
+                        5 Integrations Every SaaS Should Start With
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Payment → CRM</strong>
+                            <p><strong>Why:</strong> Automatically create customer records when someone pays</p>
+                            <p><strong>Example:</strong> Stripe → Salesforce/HubSpot</p>
+                            <p><strong>Value:</strong> Sales team knows who paid without manual data entry</p>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">CRM → Email Marketing</strong>
+                            <p><strong>Why:</strong> Keep marketing lists automatically updated</p>
+                            <p><strong>Example:</strong> HubSpot → Mailchimp/Braze</p>
+                            <p><strong>Value:</strong> Send targeted campaigns based on CRM segments</p>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Support Tickets → Slack/Teams</strong>
+                            <p><strong>Why:</strong> Get instant notifications for urgent issues</p>
+                            <p><strong>Example:</strong> Zendesk → Slack</p>
+                            <p><strong>Value:</strong> Team responds faster to critical customer problems</p>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Forms → CRM</strong>
+                            <p><strong>Why:</strong> Capture leads automatically from your website</p>
+                            <p><strong>Example:</strong> Typeform/Google Forms → Pipedrive</p>
+                            <p><strong>Value:</strong> Never lose a lead due to manual data entry delays</p>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Calendar → Video Conferencing</strong>
+                            <p><strong>Why:</strong> Automatically create meeting links</p>
+                            <p><strong>Example:</strong> Calendly → Zoom/Google Meet</p>
+                            <p><strong>Value:</strong> Seamless scheduling experience for prospects</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🤔</span>
+                        How to Know If You Need Integration Management
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">You need integration management if you answer "YES" to any of these:</strong></p>
+
+                    <div class="highlight">
+                        <strong>❌ Manual Data Entry</strong><br>
+                        Are you copying customer info between tools manually? (Gmail → CRM, Spreadsheet → Database)
+                    </div>
+
+                    <div class="highlight">
+                        <strong>❌ Data Inconsistencies</strong><br>
+                        Do different tools show different information for the same customer?
+                    </div>
+
+                    <div class="highlight">
+                        <strong>❌ Delayed Updates</strong><br>
+                        Does it take hours/days for information to sync across your tools?
+                    </div>
+
+                    <div class="highlight">
+                        <strong>❌ Using 5+ SaaS Tools</strong><br>
+                        The more tools you use, the more critical integration becomes
+                    </div>
+
+                    <div class="highlight">
+                        <strong>❌ Team Miscommunication</strong><br>
+                        Do sales and support have different customer information?
+                    </div>
+
+                    <div class="highlight">
+                        <strong>❌ Missing Opportunities</strong><br>
+                        Are you losing leads because follow-up tasks aren't created automatically?
+                    </div>
+
+                    <div class="highlight">
+                        <strong>❌ Spending Hours on Admin</strong><br>
+                        Is your team doing repetitive tasks that could be automated?
+                    </div>
+
+                    <p style="margin-top: 3%; padding: 2%; background: rgba(34, 197, 94, 0.2); border-radius: 6px; border-left: 3px solid #4ade80;">
+                        <strong style="color: #4ade80;">✅ Good News:</strong> If you answered yes to 2+ questions, integration management will save you significant time and money. Most companies see ROI within 30-60 days!
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">💰</span>
+                        Integration Cost vs. Value
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="tech-grid">
+                        <div class="tech-item">
+                            <strong>Small Setup</strong>
+                            $20-100/month<br>
+                            <span style="font-size: 0.7rem; color: #a5b4fc;">Zapier, Make.com</span>
+                        </div>
+                        <div class="tech-item">
+                            <strong>Medium Setup</strong>
+                            $300-1K/month<br>
+                            <span style="font-size: 0.7rem; color: #a5b4fc;">Workato, Tray.io</span>
+                        </div>
+                        <div class="tech-item">
+                            <strong>Enterprise Setup</strong>
+                            $2K-10K/month<br>
+                            <span style="font-size: 0.7rem; color: #a5b4fc;">Custom build + platforms</span>
+                        </div>
+                        <div class="tech-item">
+                            <strong>Time Saved</strong>
+                            10-40 hrs/week<br>
+                            <span style="font-size: 0.7rem; color: #4ade80;">= $2K-8K/month</span>
+                        </div>
+                    </div>
+
+                    <div class="highlight" style="margin-top: 3%;">
+                        <strong>ROI Example:</strong><br>
+                        Spend $500/month on integrations → Save 20 hours/week of manual work → That's $2,000-4,000/month in productivity gains → 4-8x ROI!
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🎓</span>
+                        Your First Integration: Quick Start
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Ready to try? Here's the easiest way to start:</strong></p>
+
+                    <div class="code-block">
+STEP 1: Sign up for Zapier (free tier)
+↓
+STEP 2: Choose a "Zap" (automation)
+Example: "Google Forms to Google Sheets"
+↓
+STEP 3: Connect your accounts
+Grant Zapier permission to access both tools
+↓
+STEP 4: Map the fields
+Tell Zapier which form fields go to which spreadsheet columns
+↓
+STEP 5: Test it
+Submit a test form and watch it appear in your sheet
+↓
+STEP 6: Turn it on!
+Your first integration is live!</div>
+
+                    <p style="margin-top: 3%;"><strong style="color: #a5b4fc;">This takes 10 minutes and costs $0.</strong> Once you see how it works, you'll understand the power of integration management!</p>
+
+                    <div class="highlight" style="margin-top: 2%;">
+                        <strong>Next Steps:</strong> After your first integration works, try connecting your CRM to your email tool, or your payment processor to your accounting software. Build momentum gradually!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Building Tutorials Tab -->
+        <div id="tutorials" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🛠️</span>
+                        Tutorial 1: Build Your First Zapier Automation
+                    </div>
+                    <span class="status-badge">30 min</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Project: Auto-send new leads from Google Forms to Slack</strong></p>
+
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Sign up for Zapier</strong>
+                            <p>Go to zapier.com → Click "Sign Up" → Use Google/Email</p>
+                            <div class="code-block">Free plan includes: 100 tasks/month, 5 Zaps</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Create a Google Form</strong>
+                            <p>Go to forms.google.com → New Form → Add fields:</p>
+                            <div class="code-block">
+• Full Name (Short answer)
+• Email Address (Short answer)
+• Company (Short answer)
+• Interested in: (Multiple choice)
+  - Product Demo
+  - Pricing Info
+  - Technical Support</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Create a New Zap</strong>
+                            <p>In Zapier → Click "+ Create Zap"</p>
+                            <p><strong>Trigger Setup:</strong></p>
+                            <div class="code-block">
+1. Search "Google Forms"
+2. Select "New Response in Spreadsheet"
+3. Click "Continue"
+4. Sign in to Google Account
+5. Select your form from dropdown
+6. Click "Test trigger"
+7. Submit a test form response
+8. Verify Zapier found it</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Add Slack Action</strong>
+                            <p><strong>Action Setup:</strong></p>
+                            <div class="code-block">
+1. Click "+ Add Action"
+2. Search "Slack"
+3. Select "Send Channel Message"
+4. Connect your Slack workspace
+5. Choose channel (e.g., #leads)
+6. Customize message:
+
+New Lead Alert! 🎯
+Name: [Insert "Full Name" field]
+Email: [Insert "Email" field]
+Company: [Insert "Company" field]
+Interested in: [Insert "Interested in" field]
+Submitted: [Insert "Timestamp" field]</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Test & Publish</strong>
+                            <div class="code-block">
+1. Click "Test Action"
+2. Check Slack for test message
+3. If successful → Click "Publish Zap"
+4. Turn on the Zap
+5. Submit a real form to verify</div>
+                            <p style="margin-top: 2%;"><strong style="color: #4ade80;">✅ Congratulations!</strong> You've automated lead notifications!</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight">
+                        <strong>💡 Pro Tips:</strong><br>
+                        • Add a filter to only notify for "Product Demo" requests<br>
+                        • Include @channel mention for urgent leads<br>
+                        • Add a second action to save leads to a Google Sheet
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🔗</span>
+                        Tutorial 2: Create a Webhook Listener
+                    </div>
+                    <span class="status-badge">45 min</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Project: Receive webhook data from Stripe payments</strong></p>
+
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Set Up Webhook.site (Testing)</strong>
+                            <p>For testing, use webhook.site:</p>
+                            <div class="code-block">
+1. Go to webhook.site
+2. You'll get a unique URL like:
+   https://webhook.site/abc-123-xyz
+3. Keep this tab open - it shows incoming data</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Configure Stripe Webhook</strong>
+                            <p>In Stripe Dashboard:</p>
+                            <div class="code-block">
+1. Go to Developers → Webhooks
+2. Click "+ Add endpoint"
+3. Paste your webhook.site URL
+4. Select events to listen for:
+   ✓ payment_intent.succeeded
+   ✓ customer.created
+   ✓ charge.refunded
+5. Click "Add endpoint"</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Test the Webhook</strong>
+                            <div class="code-block">
+1. In Stripe → Click your webhook
+2. Click "Send test webhook"
+3. Select "payment_intent.succeeded"
+4. Check webhook.site - you should see JSON data!
+
+Example payload:
+{
+  "type": "payment_intent.succeeded",
+  "data": {
+    "object": {
+      "amount": 5000,
+      "currency": "usd",
+      "customer": "cus_123xyz"
+    }
+  }
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Build a Real Webhook Handler (Node.js)</strong>
+                            <p>Create a simple server to receive webhooks:</p>
+                            <div class="code-block">
+// Install: npm install express body-parser
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+
+app.use(bodyParser.json());
+
+app.post('/webhook', (req, res) => {
+  const event = req.body;
+  
+  // Handle different event types
+  switch(event.type) {
+    case 'payment_intent.succeeded':
+      console.log('Payment received!');
+      console.log('Amount:', event.data.object.amount);
+      // Add to database, send email, etc.
+      break;
+    
+    case 'customer.created':
+      console.log('New customer:', event.data.object.email);
+      // Add to CRM, send welcome email
+      break;
+  }
+  
+  res.json({received: true});
+});
+
+app.listen(3000, () => {
+  console.log('Webhook server running on port 3000');
+});</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Deploy & Update Stripe</strong>
+                            <div class="code-block">
+1. Deploy to Heroku/Vercel/Railway
+2. Get your production URL:
+   https://yourapp.com/webhook
+3. Update Stripe webhook endpoint
+4. Add webhook signature verification
+   (security best practice!)</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight">
+                        <strong>🔒 Security Tip:</strong> Always verify webhook signatures to ensure requests actually come from Stripe and haven't been tampered with.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">💳</span>
+                        Tutorial 3: Connect Stripe to HubSpot CRM
+                    </div>
+                    <span class="status-badge">40 min</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Project: Auto-create CRM contacts when customers pay</strong></p>
+
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Using Zapier (No-Code Method)</strong>
+                            <div class="code-block">
+Trigger: Stripe → New Payment
+↓
+Filter: Only if amount > $100
+↓
+Action 1: HubSpot → Create/Update Contact
+- Email: [Customer Email]
+- First Name: [Customer Name]
+- Last Name: [Split from name]
+- Lifecycle Stage: Customer
+↓
+Action 2: HubSpot → Create Deal
+- Deal Name: [Customer Name] - [Amount]
+- Amount: [Payment Amount]
+- Deal Stage: Closed Won
+↓
+Action 3: Slack → Send Message
+"New customer: [Name] paid $[Amount]"</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Using Make.com (Visual Automation)</strong>
+                            <p>More powerful for complex workflows:</p>
+                            <div class="code-block">
+1. Create new scenario in Make.com
+2. Add Stripe "Watch Events" module
+3. Add Router to split logic:
+   
+   Path 1: New Customer
+   → Create HubSpot Contact
+   → Send Welcome Email (SendGrid)
+   
+   Path 2: Existing Customer
+   → Update HubSpot Deal Value
+   → Add note to timeline
+   
+4. Add error handling & logging
+5. Schedule to run every 15 min</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Using Direct API (Code Method)</strong>
+                            <p>For full control, use APIs directly:</p>
+                            <div class="code-block">
+// When Stripe webhook fires:
+
+const stripe = require('stripe')(process.env.STRIPE_KEY);
+const hubspot = require('@hubspot/api-client');
+
+async function handlePayment(paymentIntent) {
+  // Get customer from Stripe
+  const customer = await stripe.customers.retrieve(
+    paymentIntent.customer
+  );
+  
+  // Create/update in HubSpot
+  const hubspotClient = new hubspot.Client({
+    accessToken: process.env.HUBSPOT_TOKEN
+  });
+  
+  const contactObj = {
+    properties: {
+      email: customer.email,
+      firstname: customer.name.split(' ')[0],
+      lastname: customer.name.split(' ')[1],
+      amount_paid: paymentIntent.amount / 100,
+      lifecyclestage: 'customer'
+    }
+  };
+  
+  await hubspotClient.crm.contacts.basicApi.create(
+    contactObj
+  );
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight">
+                        <strong>💡 Which method to choose?</strong><br>
+                        • Zapier: Quickest, easiest, good for simple workflows<br>
+                        • Make.com: Better for complex logic and branching<br>
+                        • Direct API: Full control, best for custom needs
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">⚡</span>
+                        Tutorial 4: Build Your First API Integration
+                    </div>
+                    <span class="status-badge">60 min</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Project: Fetch customer data from your CRM via API</strong></p>
+
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Get API Credentials</strong>
+                            <p>Example: HubSpot API</p>
+                            <div class="code-block">
+1. Go to HubSpot Settings
+2. Navigate to Integrations → Private Apps
+3. Click "Create private app"
+4. Name it: "My Integration App"
+5. Select scopes:
+   ✓ crm.objects.contacts.read
+   ✓ crm.objects.contacts.write
+6. Copy the access token (starts with pat-...)</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Make Your First API Call (JavaScript)</strong>
+                            <div class="code-block">
+// Fetch all contacts from HubSpot
+
+const axios = require('axios');
+
+const HUBSPOT_TOKEN = 'your-token-here';
+
+async function getContacts() {
+  try {
+    const response = await axios.get(
+      'https://api.hubapi.com/crm/v3/objects/contacts',
+      {
+        headers: {
+          'Authorization': `Bearer ${HUBSPOT_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        params: {
+          limit: 10,
+          properties: ['firstname', 'lastname', 'email']
+        }
+      }
+    );
+    
+    console.log('Contacts:', response.data.results);
+    return response.data.results;
+  } catch (error) {
+    console.error('Error:', error.response.data);
+  }
+}
+
+getContacts();</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Create a New Contact (POST Request)</strong>
+                            <div class="code-block">
+async function createContact(email, firstName, lastName) {
+  const contactData = {
+    properties: {
+      email: email,
+      firstname: firstName,
+      lastname: lastName,
+      lifecyclestage: 'lead'
+    }
+  };
+  
+  const response = await axios.post(
+    'https://api.hubapi.com/crm/v3/objects/contacts',
+    contactData,
+    {
+      headers: {
+        'Authorization': `Bearer ${HUBSPOT_TOKEN}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+  
+  console.log('Created contact ID:', response.data.id);
+  return response.data;
+}
+
+// Usage:
+createContact(
+  'john@example.com',
+  'John',
+  'Smith'
+);</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Update Existing Contact (PATCH Request)</strong>
+                            <div class="code-block">
+async function updateContact(contactId, updates) {
+  const response = await axios.patch(
+    `https://api.hubapi.com/crm/v3/objects/contacts/${contactId}`,
+    {
+      properties: updates
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${HUBSPOT_TOKEN}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+  
+  return response.data;
+}
+
+// Usage:
+updateContact('123456', {
+  phone: '+1-555-1234',
+  company: 'Acme Corp'
+});</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Error Handling & Rate Limits</strong>
+                            <div class="code-block">
+async function apiCallWithRetry(apiFunction, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await apiFunction();
+    } catch (error) {
+      // Handle rate limiting (429 error)
+      if (error.response?.status === 429) {
+        const retryAfter = error.response.headers['retry-after'] || 5;
+        console.log(`Rate limited. Waiting ${retryAfter}s...`);
+        await new Promise(r => setTimeout(r, retryAfter * 1000));
+        continue;
+      }
+      
+      // Handle other errors
+      if (i === maxRetries - 1) throw error;
+      await new Promise(r => setTimeout(r, 2000));
+    }
+  }
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight">
+                        <strong>🎯 Best Practices:</strong><br>
+                        • Always store API keys in environment variables<br>
+                        • Implement exponential backoff for retries<br>
+                        • Log all API calls for debugging<br>
+                        • Respect rate limits (HubSpot: 100 calls/10 sec)
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🤖</span>
+                        Tutorial 5: AI-Powered Customer Onboarding
+                    </div>
+                    <span class="status-badge">90 min</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Project: Automated onboarding with AI personalization</strong></p>
+
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Architecture Overview</strong>
+                            <div class="code-block">
+New Customer Signs Up (Stripe/Auth0)
+↓
+Webhook triggers → Cloud Function
+↓
+AI analyzes customer data (OpenAI/Claude)
+↓
+Creates personalized onboarding plan
+↓
+Adds to CRM with AI-generated notes
+↓
+Sends customized welcome email series
+↓
+Schedules follow-up tasks in project tool
+↓
+Posts to Slack with AI summary</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">AI Analysis Function</strong>
+                            <div class="code-block">
+const OpenAI = require('openai');
+const openai = new OpenAI({ apiKey: process.env.OPENAI_KEY });
+
+async function analyzeCustomer(customerData) {
+  const prompt = `
+    Analyze this new customer and create an onboarding plan:
+    
+    Company: ${customerData.company}
+    Industry: ${customerData.industry}
+    Team Size: ${customerData.teamSize}
+    Plan: ${customerData.plan}
+    
+    Provide:
+    1. Key onboarding priorities
+    2. Recommended features to show first
+    3. Potential use cases
+    4. Risk factors to monitor
+  `;
+  
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.7
+  });
+  
+  return completion.choices[0].message.content;
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Complete Onboarding Workflow</strong>
+                            <div class="code-block">
+async function onboardNewCustomer(customerData) {
+  // 1. Get AI analysis
+  const aiInsights = await analyzeCustomer(customerData);
+  
+  // 2. Add to CRM with AI notes
+  await hubspot.crm.contacts.create({
+    properties: {
+      email: customerData.email,
+      company: customerData.company,
+      notes: `AI Insights: ${aiInsights}`
+    }
+  });
+  
+  // 3. Generate personalized email
+  const emailContent = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [{
+      role: "user",
+      content: `Write a welcome email for ${customerData.company} 
+                in ${customerData.industry} industry.
+                Highlight features relevant to their use case.`
+    }]
+  });
+  
+  // 4. Send email via SendGrid
+  await sendEmail({
+    to: customerData.email,
+    subject: `Welcome to [Your Product]!`,
+    html: emailContent.choices[0].message.content
+  });
+  
+  // 5. Create tasks in project management tool
+  await createOnboardingTasks(customerData, aiInsights);
+  
+  // 6. Notify team on Slack
+  await postToSlack({
+    channel: '#new-customers',
+    text: `🎉 New customer: ${customerData.company}
+           AI Recommendation: ${aiInsights.substring(0, 200)}...`
+  });
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Deploy as Serverless Function</strong>
+                            <div class="code-block">
+// Vercel/Netlify Function
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+  
+  try {
+    const customerData = req.body;
+    await onboardNewCustomer(customerData);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Onboarding error:', error);
+    res.status(500).json({ error: error.message });
+  }
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight">
+                        <strong>🚀 Advanced Features to Add:</strong><br>
+                        • A/B test different onboarding sequences<br>
+                        • Use AI to predict churn risk from signup data<br>
+                        • Automatically assign customer success manager based on company size<br>
+                        • Generate custom product tour based on industry
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">📋</span>
+                        Quick Reference: Common API Endpoints
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="integration-item">
+                        <strong>HubSpot CRM</strong>
+                        <div class="code-block">
+Base URL: https://api.hubapi.com
+Auth: Bearer token in header
+
+GET /crm/v3/objects/contacts - List contacts
+POST /crm/v3/objects/contacts - Create contact
+PATCH /crm/v3/objects/contacts/{id} - Update
+DELETE /crm/v3/objects/contacts/{id} - Delete</div>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Stripe Payments</strong>
+                        <div class="code-block">
+Base URL: https://api.stripe.com/v1
+Auth: API key as username (Basic Auth)
+
+GET /customers - List customers
+POST /customers - Create customer
+GET /payment_intents - List payments
+POST /subscriptions - Create subscription</div>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>SendGrid Email</strong>
+                        <div class="code-block">
+Base URL: https://api.sendgrid.com/v3
+Auth: API key in Authorization header
+
+POST /mail/send - Send email
+POST /marketing/contacts - Add contact
+GET /templates - List templates</div>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Slack Messaging</strong>
+                        <div class="code-block">
+Base URL: https://slack.com/api
+Auth: Bearer token
+
+POST /chat.postMessage - Send message
+POST /files.upload - Upload file
+GET /conversations.list - List channels</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">💡</span>
+                        Tutorial Tips & Troubleshooting
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="highlight">
+                        <strong>🐛 Common Issues & Fixes</strong><br><br>
+                        <strong>Error: "Invalid API Key"</strong><br>
+                        → Double-check your key, ensure no extra spaces<br>
+                        → Verify the key has proper scopes/permissions<br><br>
+                        
+                        <strong>Error: "Rate limit exceeded"</strong><br>
+                        → Implement exponential backoff<br>
+                        → Batch requests when possible<br>
+                        → Use webhooks instead of polling<br><br>
+                        
+                        <strong>Error: "CORS policy blocked"</strong><br>
+                        → API calls must be made from server-side<br>
+                        → Use a proxy or serverless function<br><br>
+                        
+                        <strong>Data not syncing</strong><br>
+                        → Check webhook endpoint is publicly accessible<br>
+                        → Verify field mapping is correct<br>
+                        → Look for errors in integration logs
+                    </div>
+
+                    <div class="highlight" style="margin-top: 2%;">
+                        <strong>📚 Learning Resources</strong><br>
+                        • API Documentation: Always start here first<br>
+                        • Postman: Test API calls before writing code<br>
+                        • webhook.site: Debug incoming webhooks<br>
+                        • RequestBin: Another webhook testing tool<br>
+                        • Stack Overflow: Search "[API name] + your error"
+                    </div>
+
+                    <div class="highlight" style="margin-top: 2%;">
+                        <strong>🎯 Next Steps After Tutorials</strong><br>
+                        1. Build one integration end-to-end yourself<br>
+                        2. Add error handling and logging<br>
+                        3. Monitor performance and optimize<br>
+                        4. Scale to handle more volume<br>
+                        5. Add AI enhancements for smarter workflows
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample Tutorials/Templates Tab -->
+        <div id="templates" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">⚡</span>
+                        30-Min Quick Start: Contact Sync Template
+                    </div>
+                    <span class="status-badge">Copy & Use</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Use Case: Sync contacts between Google Sheets and HubSpot</strong></p>
+                    
+                    <div class="highlight">
+                        <strong>What This Template Does:</strong><br>
+                        • Watches Google Sheet for new rows<br>
+                        • Creates/updates contacts in HubSpot CRM<br>
+                        • Prevents duplicates<br>
+                        • Logs errors to another sheet
+                    </div>
+
+                    <p style="margin-top: 3%;"><strong style="color: #a5b4fc;">Zapier Template Configuration:</strong></p>
+                    <div class="code-block">
+TRIGGER: Google Sheets → New Row
+  Spreadsheet: [Your Sheet Name]
+  Worksheet: Contacts
+  Trigger Column: Email
+
+↓
+
+FILTER: Only if Email is not empty
+
+↓
+
+ACTION 1: HubSpot → Create or Update Contact
+  Email: {{Email}} (from sheet)
+  First Name: {{First Name}}
+  Last Name: {{Last Name}}
+  Phone: {{Phone}}
+  Company: {{Company}}
+  Lifecycle Stage: Lead
+
+↓
+
+ACTION 2: Google Sheets → Update Row
+  Spreadsheet: [Same Sheet]
+  Worksheet: Contacts
+  Row: {{Row Number}}
+  Status Column: "Synced ✓"
+  Timestamp: {{Current Time}}</div>
+
+                    <div class="highlight" style="margin-top: 3%;">
+                        <strong>📥 Download Ready-to-Use:</strong><br>
+                        • Pre-built Zapier template (import link)<br>
+                        • Sample Google Sheet with formulas<br>
+                        • Field mapping guide<br>
+                        • Testing checklist
+                    </div>
+
+                    <p style="margin-top: 3%;"><strong style="color: #a5b4fc;">Customization Tips:</strong></p>
+                    <ul>
+                        <li>Add custom properties: Lead Source, Industry, etc.</li>
+                        <li>Include data enrichment with Clearbit</li>
+                        <li>Send Slack notification for high-value leads</li>
+                        <li>Trigger email sequence based on lead score</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">📧</span>
+                        Copy-Paste Template: Email to CRM Logger
+                    </div>
+                    <span class="status-badge">Ready to Use</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Use Case: Automatically log important emails to your CRM</strong></p>
+
+                    <div class="code-block">
+// Gmail + HubSpot Integration (Apps Script)
+
+function logEmailToCRM() {
+  const HUBSPOT_API_KEY = 'YOUR_KEY_HERE';
+  const LABEL = 'Log to CRM'; // Gmail label to watch
+  
+  // Get emails with specific label
+  const threads = GmailApp.search('label:' + LABEL + ' is:unread');
+  
+  threads.forEach(thread => {
+    const messages = thread.getMessages();
+    
+    messages.forEach(message => {
+      const email = message.getFrom();
+      const subject = message.getSubject();
+      const body = message.getPlainBody();
+      const date = message.getDate();
+      
+      // Find contact in HubSpot by email
+      const searchUrl = `https://api.hubapi.com/contacts/v1/contact/email/${email}/profile`;
+      
+      const searchOptions = {
+        method: 'get',
+        headers: {
+          'Authorization': `Bearer ${HUBSPOT_API_KEY}`
+        }
+      };
+      
+      try {
+        const response = UrlFetchApp.fetch(searchUrl, searchOptions);
+        const contact = JSON.parse(response.getContentText());
+        
+        // Add note to contact timeline
+        const noteUrl = 'https://api.hubapi.com/engagements/v1/engagements';
+        const noteData = {
+          engagement: {
+            active: true,
+            type: 'NOTE',
+            timestamp: date.getTime()
+          },
+          associations: {
+            contactIds: [contact.vid]
+          },
+          metadata: {
+            body: `Email: ${subject}\n\n${body.substring(0, 500)}...`
+          }
+        };
+        
+        const noteOptions = {
+          method: 'post',
+          headers: {
+            'Authorization': `Bearer ${HUBSPOT_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          payload: JSON.stringify(noteData)
+        };
+        
+        UrlFetchApp.fetch(noteUrl, noteOptions);
+        
+        // Mark as read and remove label
+        message.markRead();
+        thread.removeLabel(GmailApp.getUserLabelByName(LABEL));
+        
+      } catch (error) {
+        Logger.log('Error: ' + error);
+      }
+    });
+  });
+}
+
+// Set up trigger: Edit → Current project's triggers → Add trigger
+// Function: logEmailToCRM, Event: Time-driven, Every 15 minutes</div>
+
+                    <div class="highlight" style="margin-top: 3%;">
+                        <strong>Setup Instructions:</strong><br>
+                        1. Open Google Sheets → Extensions → Apps Script<br>
+                        2. Paste the code above<br>
+                        3. Replace YOUR_KEY_HERE with HubSpot API key<br>
+                        4. Create Gmail label "Log to CRM"<br>
+                        5. Set up time-based trigger (every 15 min)<br>
+                        6. Label emails you want logged to CRM
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">💰</span>
+                        Real SaaS Example: Payment to Accounting Sync
+                    </div>
+                    <span class="status-badge">Case Study</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Company: B2B SaaS with 500+ customers</strong></p>
+                    <p><strong>Challenge:</strong> Finance team spent 10 hours/week manually entering Stripe payments into QuickBooks</p>
+
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Their Solution Architecture</strong>
+                            <div class="code-block">
+Stripe Webhook (payment_intent.succeeded)
+↓
+AWS Lambda Function (Node.js)
+↓
+Data Transformation Layer
+  • Convert cents to dollars
+  • Map Stripe customer to QB customer
+  • Categorize by product/service
+↓
+QuickBooks Online API
+  • Create invoice
+  • Record payment
+  • Update customer balance
+↓
+Notification Layer
+  • Slack alert to #finance
+  • Email receipt to customer
+  • Update internal dashboard</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Code Template (Simplified)</strong>
+                            <div class="code-block">
+const stripe = require('stripe')(process.env.STRIPE_KEY);
+const QuickBooks = require('node-quickbooks');
+
+exports.handler = async (event) => {
+  const payment = JSON.parse(event.body);
+  
+  if (payment.type !== 'payment_intent.succeeded') {
+    return { statusCode: 200, body: 'Ignored' };
+  }
+  
+  // Get Stripe customer details
+  const customer = await stripe.customers.retrieve(
+    payment.data.object.customer
+  );
+  
+  // Find matching QuickBooks customer
+  const qbCustomer = await findQBCustomer(customer.email);
+  
+  // Create invoice in QuickBooks
+  const invoice = {
+    Line: [{
+      Amount: payment.data.object.amount / 100,
+      DetailType: "SalesItemLineDetail",
+      SalesItemLineDetail: {
+        ItemRef: { value: "1" }, // Service item
+        Qty: 1
+      }
+    }],
+    CustomerRef: { value: qbCustomer.Id }
+  };
+  
+  const qb = new QuickBooks(/* config */);
+  const createdInvoice = await qb.createInvoice(invoice);
+  
+  // Record payment
+  await qb.createPayment({
+    CustomerRef: { value: qbCustomer.Id },
+    TotalAmt: payment.data.object.amount / 100,
+    Line: [{
+      Amount: payment.data.object.amount / 100,
+      LinkedTxn: [{
+        TxnId: createdInvoice.Id,
+        TxnType: "Invoice"
+      }]
+    }]
+  });
+  
+  // Send notifications
+  await notifyFinanceTeam(payment, createdInvoice);
+  
+  return { statusCode: 200, body: 'Success' };
+};</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight" style="margin-top: 3%;">
+                        <strong>Results:</strong><br>
+                        ⏱️ Time saved: 10 hours/week → 520 hours/year<br>
+                        💰 Cost savings: ~$15,000/year in manual labor<br>
+                        ✅ Accuracy: 99.9% (vs 95% manual entry)<br>
+                        🚀 Processing time: Real-time vs 24-48 hour delay
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🎯</span>
+                        Template: Lead Scoring & Routing System
+                    </div>
+                    <span class="status-badge">Advanced</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Automatically score and assign leads based on behavior and firmographics</strong></p>
+
+                    <div class="code-block">
+// Trigger: New lead from website form
+
+1. DATA COLLECTION
+   Form Data: Name, Email, Company, Role
+   ↓
+   Enrichment API (Clearbit/ZoomInfo):
+   - Company size
+   - Industry
+   - Revenue estimate
+   - Tech stack
+   ↓
+   Behavioral Data:
+   - Pages visited
+   - Time on site
+   - Resources downloaded
+
+2. SCORING ALGORITHM (0-100 points)
+   
+   Company Size:
+   - 1-10 employees: 10 points
+   - 11-50: 20 points
+   - 51-200: 40 points
+   - 200+: 50 points
+   
+   Industry Match:
+   - Target industry: +30 points
+   - Adjacent industry: +15 points
+   
+   Role/Title:
+   - C-level: +20 points
+   - Director/VP: +15 points
+   - Manager: +10 points
+   
+   Engagement:
+   - Visited pricing: +15 points
+   - Downloaded case study: +10 points
+   - Watched demo video: +20 points
+
+3. ROUTING LOGIC
+   
+   90-100 points (Hot Lead):
+   → Assign to senior sales rep immediately
+   → Send SMS alert
+   → Schedule call within 1 hour
+   → Add to high-priority Slack channel
+   
+   70-89 points (Warm Lead):
+   → Assign to sales rep (round-robin)
+   → Email alert
+   → Follow up within 24 hours
+   → Add to nurture sequence
+   
+   50-69 points (Qualified Lead):
+   → Add to CRM
+   → Automated email sequence
+   → Schedule follow-up task in 3 days
+   
+   Below 50 points (Cold Lead):
+   → Marketing automation nurture
+   → Re-score monthly
+   → Newsletter subscription</div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Implementation (Make.com Scenario)</strong>
+                            <div class="code-block">
+Module 1: Webhook (catch form submission)
+↓
+Module 2: Clearbit Enrichment
+  Input: Email domain
+  Output: Company data
+↓
+Module 3: JavaScript (calculate score)
+  Code: [scoring algorithm above]
+↓
+Module 4: Router (branch by score)
+  Path A: Score ≥90 → Hot lead flow
+  Path B: Score 70-89 → Warm lead flow
+  Path C: Score 50-69 → Qualified flow
+  Path D: Score <50 → Cold flow
+↓
+Module 5a: HubSpot (create contact with score)
+Module 5b: Salesforce (assign to rep)
+Module 5c: Slack (notify team)
+Module 5d: Twilio (SMS to sales rep for hot leads)</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight" style="margin-top: 3%;">
+                        <strong>Download Template Package:</strong><br>
+                        ✓ Make.com blueprint (importable)<br>
+                        ✓ Scoring spreadsheet calculator<br>
+                        ✓ Field mapping documentation<br>
+                        ✓ A/B testing framework for score optimization
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">📊</span>
+                        Template: Customer Health Score Dashboard
+                    </div>
+                    <span class="status-badge">Copy & Deploy</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Monitor customer health across all touchpoints</strong></p>
+
+                    <div class="code-block">
+DATA SOURCES TO INTEGRATE:
+
+1. Product Usage (via API):
+   - Login frequency
+   - Feature adoption rate
+   - Time spent in app
+   - Key actions completed
+
+2. Support Tickets (Zendesk/Intercom):
+   - Number of tickets
+   - Response time
+   - Sentiment analysis
+   - Escalations
+
+3. Billing (Stripe):
+   - Payment status
+   - MRR/ARR
+   - Payment failures
+   - Subscription changes
+
+4. Communication (SendGrid):
+   - Email open rates
+   - Link clicks
+   - Engagement score
+
+5. NPS/Surveys (Delighted):
+   - NPS score
+   - Feedback sentiment
+   - Survey response rate
+
+HEALTH SCORE CALCULATION:
+
+health_score = (
+  (usage_score * 0.4) +
+  (support_score * 0.2) +
+  (billing_score * 0.2) +
+  (engagement_score * 0.1) +
+  (satisfaction_score * 0.1)
+) * 100
+
+THRESHOLDS:
+• 80-100: Healthy (Green)
+• 60-79: At Risk (Yellow)
+• 0-59: Churning (Red)</div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Implementation Code (Python)</strong>
+                            <div class="code-block">
+import requests
+from datetime import datetime, timedelta
+
+def calculate_health_score(customer_id):
+    # Fetch usage data
+    usage = get_product_usage(customer_id)
+    usage_score = min(usage['logins_last_30days'] / 20, 1.0)
+    
+    # Fetch support data
+    tickets = get_support_tickets(customer_id)
+    support_score = max(1 - (tickets['count'] / 10), 0)
+    
+    # Fetch billing data
+    billing = get_billing_status(customer_id)
+    billing_score = 1.0 if billing['current'] else 0.0
+    
+    # Fetch engagement data
+    engagement = get_email_engagement(customer_id)
+    engagement_score = engagement['open_rate']
+    
+    # Fetch satisfaction data
+    nps = get_nps_score(customer_id)
+    satisfaction_score = (nps + 100) / 200  # Convert -100 to 100 → 0 to 1
+    
+    # Calculate weighted health score
+    health = (
+        usage_score * 0.4 +
+        support_score * 0.2 +
+        billing_score * 0.2 +
+        engagement_score * 0.1 +
+        satisfaction_score * 0.1
+    ) * 100
+    
+    return {
+        'customer_id': customer_id,
+        'health_score': round(health, 1),
+        'status': 'Healthy' if health >= 80 else 'At Risk' if health >= 60 else 'Churning',
+        'components': {
+            'usage': round(usage_score * 100, 1),
+            'support': round(support_score * 100, 1),
+            'billing': round(billing_score * 100, 1),
+            'engagement': round(engagement_score * 100, 1),
+            'satisfaction': round(satisfaction_score * 100, 1)
+        }
+    }
+
+# Run for all customers and update CRM
+for customer in get_all_customers():
+    score = calculate_health_score(customer['id'])
+    update_crm_field(customer['id'], 'health_score', score['health_score'])
+    
+    # Trigger alerts for at-risk customers
+    if score['status'] in ['At Risk', 'Churning']:
+        notify_csm(customer, score)</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight" style="margin-top: 3%;">
+                        <strong>🎁 Template Includes:</strong><br>
+                        • Complete Python script<br>
+                        • Data visualization dashboard (Grafana/Metabase)<br>
+                        • Alert configuration for at-risk customers<br>
+                        • Weekly email report template
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">✅</span>
+                        Integration Checklists & Worksheets
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="integration-item">
+                        <strong>Pre-Integration Checklist</strong>
+                        <div class="code-block">
+□ Define integration objective
+□ Map data flow diagram
+□ Identify required API endpoints
+□ Check API rate limits
+□ Verify data field availability
+□ Plan error handling strategy
+□ Set up monitoring/logging
+□ Create rollback plan
+□ Document integration logic
+□ Schedule testing window</div>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Security Checklist</strong>
+                        <div class="code-block">
+□ Store API keys in environment variables
+□ Use OAuth 2.0 when available
+□ Implement webhook signature verification
+□ Enable HTTPS/TLS encryption
+□ Set up IP whitelisting
+□ Configure proper CORS headers
+□ Implement request throttling
+□ Add authentication logging
+□ Regular security audits
+□ Rotate credentials quarterly</div>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Testing Checklist</strong>
+                        <div class="code-block">
+□ Test with sample data first
+□ Verify field mapping accuracy
+□ Test error scenarios
+□ Check duplicate handling
+□ Validate data transformations
+□ Test rate limit handling
+□ Verify webhook delivery
+□ Check timeout scenarios
+□ Test rollback procedures
+□ Document test results</div>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Go-Live Checklist</strong>
+                        <div class="code-block">
+□ Set up monitoring alerts
+□ Configure error notifications
+□ Document API endpoints used
+□ Train team on new workflow
+□ Create user documentation
+□ Set up backup/redundancy
+□ Schedule health checks
+□ Plan maintenance windows
+□ Establish support procedures
+□ Monitor for first 48 hours</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🎬</span>
+                        Video Walkthrough Scripts
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="highlight">
+                        <strong>Script 1: "How We Automated Our Sales Process"</strong><br><br>
+                        <em>[0:00-0:30] Introduction</em><br>
+                        "Before integration, our sales team wasted 15 hours per week on manual data entry. Here's how we fixed it..."<br><br>
+                        
+                        <em>[0:30-2:00] The Problem</em><br>
+                        "Show old workflow: Form → Manual copy to CRM → Manual email → Manual task creation"<br><br>
+                        
+                        <em>[2:00-5:00] The Solution</em><br>
+                        "Walk through Zapier setup: Trigger, Actions, Field Mapping"<br><br>
+                        
+                        <em>[5:00-6:30] Results</em><br>
+                        "Show analytics: 15 hours saved, 0 errors, instant follow-up"<br><br>
+                        
+                        <em>[6:30-7:00] Call to Action</em><br>
+                        "Download our exact template and customize for your needs"
+                    </div>
+
+                    <div class="highlight" style="margin-top: 2%;">
+                        <strong>Script 2: "Building Your First API Integration"</strong><br><br>
+                        <em>Target: Developers new to integrations</em><br><br>
+                        
+                        • Introduction to REST APIs (2 min)<br>
+                        • Getting API credentials (3 min)<br>
+                        • Making first API call in Postman (5 min)<br>
+                        • Writing integration code (10 min)<br>
+                        • Testing and debugging (5 min)<br>
+                        • Deploying to production (3 min)<br>
+                        • Best practices recap (2 min)
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">💡</span>
+                        Pro Tips for Using Templates
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="highlight">
+                        <strong>1. Start with a Template, Don't Build from Scratch</strong><br>
+                        Templates save 60-80% of development time. Customize rather than reinvent.
+                    </div>
+
+                    <div class="highlight">
+                        <strong>2. Test with Dummy Data First</strong><br>
+                        Never test integrations on live customer data. Create test accounts and sample data.
+                    </div>
+
+                    <div class="highlight">
+                        <strong>3. Document Your Customizations</strong><br>
+                        Keep a changelog of what you modified from the original template for troubleshooting.
+                    </div>
+
+                    <div class="highlight">
+                        <strong>4. Version Control Your Templates</strong><br>
+                        Save different versions as you iterate. GitHub is great for this.
+                    </div>
+
+                    <div class="highlight">
+                        <strong>5. Share Templates Within Your Organization</strong><br>
+                        Build a template library so teams don't rebuild the same integrations.
+                    </div>
+
+                    <div class="highlight">
+                        <strong>6. Monitor Template Performance</strong><br>
+                        Set up alerts for when templates fail or slow down. Optimize over time.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Builder Tab -->
+        <div id="builder" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🎯</span>
+                        Integration Builder Wizard
+                    </div>
+                    <span class="status-badge">Interactive</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Choose your tools to get custom integration steps</strong></p>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 1%; color: #a5b4fc; font-weight: 600;">Step 1: Select Source Tool</label>
+                        <select id="sourceTool" onchange="updateIntegrationPlan()" style="width: 100%; padding: 3%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.85rem;">
+                            <option value="">-- Choose Source --</option>
+                            <option value="stripe">Stripe (Payments)</option>
+                            <option value="shopify">Shopify (E-commerce)</option>
+                            <option value="typeform">Typeform (Forms)</option>
+                            <option value="gmail">Gmail (Email)</option>
+                            <option value="calendly">Calendly (Scheduling)</option>
+                            <option value="hubspot">HubSpot (CRM)</option>
+                            <option value="salesforce">Salesforce (CRM)</option>
+                            <option value="intercom">Intercom (Support)</option>
+                            <option value="slack">Slack (Communication)</option>
+                            <option value="googlesheets">Google Sheets (Data)</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 1%; color: #a5b4fc; font-weight: 600;">Step 2: Select Destination Tool</label>
+                        <select id="destTool" onchange="updateIntegrationPlan()" style="width: 100%; padding: 3%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.85rem;">
+                            <option value="">-- Choose Destination --</option>
+                            <option value="hubspot">HubSpot (CRM)</option>
+                            <option value="salesforce">Salesforce (CRM)</option>
+                            <option value="mailchimp">Mailchimp (Email Marketing)</option>
+                            <option value="sendgrid">SendGrid (Email)</option>
+                            <option value="slack">Slack (Communication)</option>
+                            <option value="airtable">Airtable (Database)</option>
+                            <option value="googlesheets">Google Sheets (Data)</option>
+                            <option value="notion">Notion (Workspace)</option>
+                            <option value="quickbooks">QuickBooks (Accounting)</option>
+                            <option value="asana">Asana (Project Management)</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 1%; color: #a5b4fc; font-weight: 600;">Step 3: What triggers the integration?</label>
+                        <select id="triggerType" onchange="updateIntegrationPlan()" style="width: 100%; padding: 3%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.85rem;">
+                            <option value="">-- Choose Trigger --</option>
+                            <option value="new">New record/item created</option>
+                            <option value="update">Existing record updated</option>
+                            <option value="schedule">On a schedule (hourly/daily)</option>
+                            <option value="webhook">Real-time webhook event</option>
+                        </select>
+                    </div>
+
+                    <div id="integrationPlan" style="margin-top: 4%; padding: 3%; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border-left: 3px solid #8b5cf6; display: none;">
+                        <h3 style="color: #c4b5fd; font-size: 0.9rem; margin-bottom: 2%;">📋 Your Custom Integration Plan</h3>
+                        <div id="planContent"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">💰</span>
+                        Integration Cost Calculator
+                    </div>
+                    <span class="status-badge">Calculate ROI</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Calculate the cost vs. value of your integration</strong></p>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 1%; color: #e0e0e0; font-size: 0.8rem;">Hours spent on manual work per week:</label>
+                        <input type="number" id="hoursPerWeek" value="10" min="0" max="168" onchange="calculateROI()" style="width: 100%; padding: 3%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.85rem;">
+                    </div>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 1%; color: #e0e0e0; font-size: 0.8rem;">Average hourly rate ($):</label>
+                        <input type="number" id="hourlyRate" value="50" min="0" max="500" onchange="calculateROI()" style="width: 100%; padding: 3%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.85rem;">
+                    </div>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 1%; color: #e0e0e0; font-size: 0.8rem;">Integration platform cost per month ($):</label>
+                        <select id="platformCost" onchange="calculateROI()" style="width: 100%; padding: 3%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.85rem;">
+                            <option value="0">Free tier (Zapier, Make.com)</option>
+                            <option value="20">Basic - $20/month</option>
+                            <option value="50">Starter - $50/month</option>
+                            <option value="100">Professional - $100/month</option>
+                            <option value="300">Business - $300/month</option>
+                            <option value="600">Enterprise - $600/month</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 1%; color: #e0e0e0; font-size: 0.8rem;">Expected automation efficiency (%):</label>
+                        <input type="range" id="efficiency" value="80" min="0" max="100" onchange="calculateROI(); document.getElementById('efficiencyValue').innerText = this.value + '%'" style="width: 100%;">
+                        <div style="text-align: center; margin-top: 1%; color: #a5b4fc; font-weight: 600;"><span id="efficiencyValue">80%</span></div>
+                    </div>
+
+                    <div id="roiResults" style="margin-top: 4%; padding: 3%; background: rgba(34, 197, 94, 0.2); border-radius: 8px; border-left: 3px solid #4ade80;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2%; margin-bottom: 2%;">
+                            <div>
+                                <div style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.7);">Monthly Cost</div>
+                                <div style="font-size: 1.2rem; font-weight: 600; color: #4ade80;" id="monthlyCost">$0</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.7);">Monthly Savings</div>
+                                <div style="font-size: 1.2rem; font-weight: 600; color: #4ade80;" id="monthlySavings">$0</div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2%;">
+                            <div>
+                                <div style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.7);">Annual ROI</div>
+                                <div style="font-size: 1.2rem; font-weight: 600; color: #4ade80;" id="annualROI">0x</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.7);">Payback Period</div>
+                                <div style="font-size: 1.2rem; font-weight: 600; color: #4ade80;" id="paybackPeriod">0 days</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🧭</span>
+                        Which Integration Platform is Right for Me?
+                    </div>
+                    <span class="status-badge">Quiz</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Answer 5 questions to get a personalized recommendation</strong></p>
+
+                    <div class="workflow-step" style="margin-top: 3%;">
+                        <div class="step-number">1</div>
+                        <div style="flex: 1;">
+                            <strong style="color: #a5b4fc;">What's your technical skill level?</strong>
+                            <select id="q1" onchange="calculatePlatformScore()" style="width: 100%; margin-top: 2%; padding: 2.5%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.8rem;">
+                                <option value="">-- Select --</option>
+                                <option value="beginner">Beginner - No coding experience</option>
+                                <option value="intermediate">Intermediate - Some coding/technical knowledge</option>
+                                <option value="advanced">Advanced - Developer/engineer</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div style="flex: 1;">
+                            <strong style="color: #a5b4fc;">How many integrations do you need?</strong>
+                            <select id="q2" onchange="calculatePlatformScore()" style="width: 100%; margin-top: 2%; padding: 2.5%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.8rem;">
+                                <option value="">-- Select --</option>
+                                <option value="1-3">1-3 simple integrations</option>
+                                <option value="4-10">4-10 integrations</option>
+                                <option value="10+">10+ complex workflows</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div style="flex: 1;">
+                            <strong style="color: #a5b4fc;">What's your monthly budget?</strong>
+                            <select id="q3" onchange="calculatePlatformScore()" style="width: 100%; margin-top: 2%; padding: 2.5%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.8rem;">
+                                <option value="">-- Select --</option>
+                                <option value="free">$0 - Free tier only</option>
+                                <option value="budget">$20-100/month</option>
+                                <option value="standard">$100-500/month</option>
+                                <option value="enterprise">$500+/month</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div style="flex: 1;">
+                            <strong style="color: #a5b4fc;">Do you need custom logic/branching?</strong>
+                            <select id="q4" onchange="calculatePlatformScore()" style="width: 100%; margin-top: 2%; padding: 2.5%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.8rem;">
+                                <option value="">-- Select --</option>
+                                <option value="no">No - Simple A to B workflows</option>
+                                <option value="some">Some - Basic conditions/filters</option>
+                                <option value="yes">Yes - Complex branching and logic</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div style="flex: 1;">
+                            <strong style="color: #a5b4fc;">How important is AI/automation?</strong>
+                            <select id="q5" onchange="calculatePlatformScore()" style="width: 100%; margin-top: 2%; padding: 2.5%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.8rem;">
+                                <option value="">-- Select --</option>
+                                <option value="not">Not important</option>
+                                <option value="nice">Nice to have</option>
+                                <option value="critical">Critical requirement</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="platformRecommendation" style="margin-top: 4%; padding: 3%; background: rgba(139, 92, 246, 0.15); border-radius: 8px; border-left: 3px solid #8b5cf6; display: none;">
+                        <h3 style="color: #c4b5fd; font-size: 0.9rem; margin-bottom: 2%;">🎯 Your Recommended Platform</h3>
+                        <div id="recommendationContent"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🔍</span>
+                        Troubleshooting Flowchart
+                    </div>
+                    <span class="status-badge">Diagnostic Tool</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">What's wrong with your integration?</strong></p>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 2%; color: #a5b4fc; font-weight: 600;">Select your issue:</label>
+                        <select id="issueType" onchange="showTroubleshootingSteps()" style="width: 100%; padding: 3%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.85rem;">
+                            <option value="">-- Choose Issue --</option>
+                            <option value="nodata">No data is syncing at all</option>
+                            <option value="partial">Some data syncs, some doesn't</option>
+                            <option value="duplicate">Creating duplicate records</option>
+                            <option value="slow">Integration is too slow</option>
+                            <option value="error">Getting error messages</option>
+                            <option value="auth">Authentication/permission issues</option>
+                            <option value="mapping">Wrong data in wrong fields</option>
+                        </select>
+                    </div>
+
+                    <div id="troubleshootingSteps" style="margin-top: 4%; display: none;"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">📊</span>
+                        Integration Complexity Estimator
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Estimate development time and difficulty</strong></p>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 1%; color: #e0e0e0; font-size: 0.8rem;">Number of systems to integrate:</label>
+                        <input type="number" id="numSystems" value="2" min="2" max="20" onchange="estimateComplexity()" style="width: 100%; padding: 3%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.85rem;">
+                    </div>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 1%; color: #e0e0e0; font-size: 0.8rem;">Data transformation complexity:</label>
+                        <select id="transformComplexity" onchange="estimateComplexity()" style="width: 100%; padding: 3%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.85rem;">
+                            <option value="1">Simple - Direct field mapping</option>
+                            <option value="2">Medium - Some formatting/calculations</option>
+                            <option value="3">Complex - Heavy data transformation</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 1%; color: #e0e0e0; font-size: 0.8rem;">Does it need custom code?</label>
+                        <select id="needsCode" onchange="estimateComplexity()" style="width: 100%; padding: 3%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.85rem;">
+                            <option value="0">No - Use no-code platform</option>
+                            <option value="1">Yes - Some custom functions</option>
+                            <option value="2">Yes - Fully custom build</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-top: 3%;">
+                        <label style="display: block; margin-bottom: 1%; color: #e0e0e0; font-size: 0.8rem;">Error handling requirements:</label>
+                        <select id="errorHandling" onchange="estimateComplexity()" style="width: 100%; padding: 3%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; color: #e0e0e0; font-size: 0.85rem;">
+                            <option value="1">Basic - Simple retry logic</option>
+                            <option value="2">Advanced - Complex error handling</option>
+                            <option value="3">Enterprise - Full monitoring & alerts</option>
+                        </select>
+                    </div>
+
+                    <div id="complexityResult" style="margin-top: 4%; padding: 3%; background: rgba(99, 102, 241, 0.15); border-radius: 8px; border-left: 3px solid #6366f1;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3%;">
+                            <div>
+                                <div style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.7);">Difficulty Level</div>
+                                <div style="font-size: 1.1rem; font-weight: 600; color: #a5b4fc; margin-top: 1%;" id="difficultyLevel">Medium</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.7);">Est. Time</div>
+                                <div style="font-size: 1.1rem; font-weight: 600; color: #a5b4fc; margin-top: 1%;" id="estimatedTime">10-20 hours</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 3%;">
+                            <div style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 1%;">Recommended Approach</div>
+                            <div style="font-size: 0.85rem; color: #e0e0e0;" id="recommendedApproach">Use Make.com or Zapier with custom functions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Training Modules Tab -->
+        <div id="advanced" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🔐</span>
+                        Module 1: API Authentication Masterclass
+                    </div>
+                    <span class="status-badge">Expert Level</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Master all authentication methods for secure integrations</strong></p>
+
+                    <div class="workflow-step" style="margin-top: 3%;">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">OAuth 2.0 Complete Flow</strong>
+                            <p>The gold standard for secure API access without exposing passwords.</p>
+                            <div class="code-block">
+// OAuth 2.0 Authorization Code Flow
+
+// Step 1: Redirect user to authorization URL
+const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?
+  client_id=${CLIENT_ID}&
+  redirect_uri=${REDIRECT_URI}&
+  response_type=code&
+  scope=https://www.googleapis.com/auth/userinfo.email&
+  access_type=offline&
+  prompt=consent`;
+
+window.location.href = authUrl;
+
+// Step 2: Handle callback with authorization code
+app.get('/oauth/callback', async (req, res) => {
+  const { code } = req.query;
+  
+  // Step 3: Exchange code for access token
+  const tokenResponse = await axios.post(
+    'https://oauth2.googleapis.com/token',
+    {
+      code: code,
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      redirect_uri: REDIRECT_URI,
+      grant_type: 'authorization_code'
+    }
+  );
+  
+  const { access_token, refresh_token, expires_in } = tokenResponse.data;
+  
+  // Step 4: Store tokens securely (encrypted in database)
+  await storeTokens(userId, {
+    accessToken: encrypt(access_token),
+    refreshToken: encrypt(refresh_token),
+    expiresAt: Date.now() + (expires_in * 1000)
+  });
+  
+  res.redirect('/dashboard');
+});
+
+// Step 5: Use access token for API calls
+async function makeAuthenticatedRequest(userId, endpoint) {
+  let tokens = await getTokens(userId);
+  
+  // Refresh if expired
+  if (Date.now() >= tokens.expiresAt) {
+    tokens = await refreshAccessToken(tokens.refreshToken);
+  }
+  
+  const response = await axios.get(endpoint, {
+    headers: {
+      'Authorization': `Bearer ${decrypt(tokens.accessToken)}`
+    }
+  });
+  
+  return response.data;
+}
+
+// Token refresh function
+async function refreshAccessToken(refreshToken) {
+  const response = await axios.post(
+    'https://oauth2.googleapis.com/token',
+    {
+      refresh_token: decrypt(refreshToken),
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      grant_type: 'refresh_token'
+    }
+  );
+  
+  // Update stored tokens
+  return response.data;
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">API Key Security Best Practices</strong>
+                            <div class="highlight">
+                                <strong>❌ Never Do This:</strong><br>
+                                • Hardcode API keys in source code<br>
+                                • Commit keys to Git repositories<br>
+                                • Share keys via email or Slack<br>
+                                • Use same key across environments<br>
+                                • Store keys in plain text databases
+                            </div>
+                            <div class="highlight" style="margin-top: 2%;">
+                                <strong>✅ Always Do This:</strong><br>
+                                • Use environment variables (.env files)<br>
+                                • Rotate keys quarterly (at minimum)<br>
+                                • Use different keys for dev/staging/prod<br>
+                                • Implement key encryption at rest<br>
+                                • Monitor for unauthorized usage<br>
+                                • Use secrets management tools (Vault, AWS Secrets Manager)
+                            </div>
+                            <div class="code-block">
+// Secure API key management example
+
+// .env file (never commit to Git!)
+STRIPE_SECRET_KEY=sk_live_abc123...
+HUBSPOT_API_KEY=pat-na1-xyz789...
+
+// .gitignore
+.env
+.env.*
+
+// Load from environment
+require('dotenv').config();
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+// Encrypt before storing in database
+const crypto = require('crypto');
+const algorithm = 'aes-256-gcm';
+
+function encryptKey(apiKey) {
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv(
+    algorithm, 
+    Buffer.from(process.env.ENCRYPTION_KEY, 'hex'),
+    iv
+  );
+  
+  let encrypted = cipher.update(apiKey, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  const authTag = cipher.getAuthTag();
+  
+  return {
+    encrypted,
+    iv: iv.toString('hex'),
+    authTag: authTag.toString('hex')
+  };
+}
+
+// Decrypt when retrieving
+function decryptKey(encryptedData) {
+  const decipher = crypto.createDecipheriv(
+    algorithm,
+    Buffer.from(process.env.ENCRYPTION_KEY, 'hex'),
+    Buffer.from(encryptedData.iv, 'hex')
+  );
+  
+  decipher.setAuthTag(Buffer.from(encryptedData.authTag, 'hex'));
+  
+  let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  
+  return decrypted;
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">JWT Tokens Explained</strong>
+                            <p>JSON Web Tokens for stateless authentication in modern APIs.</p>
+                            <div class="code-block">
+// Generate JWT token
+const jwt = require('jsonwebtoken');
+
+function generateToken(userId, permissions) {
+  const payload = {
+    sub: userId,  // Subject (user ID)
+    iat: Math.floor(Date.now() / 1000),  // Issued at
+    exp: Math.floor(Date.now() / 1000) + (60 * 60),  // Expires in 1 hour
+    permissions: permissions
+  };
+  
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    algorithm: 'HS256'
+  });
+  
+  return token;
+}
+
+// Verify JWT token
+function verifyToken(token) {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Check expiration
+    if (decoded.exp < Date.now() / 1000) {
+      throw new Error('Token expired');
+    }
+    
+    return decoded;
+  } catch (error) {
+    console.error('Token verification failed:', error);
+    return null;
+  }
+}
+
+// Middleware to protect API routes
+function authenticateJWT(req, res, next) {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+  
+  const token = authHeader.substring(7);
+  const decoded = verifyToken(token);
+  
+  if (!decoded) {
+    return res.status(403).json({ error: 'Invalid token' });
+  }
+  
+  req.user = decoded;
+  next();
+}
+
+// Usage in Express
+app.get('/api/protected', authenticateJWT, (req, res) => {
+  res.json({ data: 'This is protected', user: req.user });
+});</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Webhook Signature Verification</strong>
+                            <p>Ensure webhooks actually come from the service claiming to send them.</p>
+                            <div class="code-block">
+// Stripe webhook signature verification
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+app.post('/webhooks/stripe', 
+  express.raw({ type: 'application/json' }),
+  (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    
+    let event;
+    
+    try {
+      // Verify signature
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        sig,
+        endpointSecret
+      );
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+    
+    // Signature verified - process event
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        handlePaymentSuccess(event.data.object);
+        break;
+      // ... other event types
+    }
+    
+    res.json({ received: true });
+  }
+);
+
+// Generic HMAC signature verification
+const crypto = require('crypto');
+
+function verifyWebhookSignature(payload, signature, secret) {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+  
+  // Use constant-time comparison to prevent timing attacks
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+}
+
+// Usage
+app.post('/webhooks/custom', (req, res) => {
+  const signature = req.headers['x-signature'];
+  const payload = JSON.stringify(req.body);
+  
+  if (!verifyWebhookSignature(payload, signature, WEBHOOK_SECRET)) {
+    return res.status(401).json({ error: 'Invalid signature' });
+  }
+  
+  // Process webhook
+  res.json({ received: true });
+});</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight" style="margin-top: 3%;">
+                        <strong>🎓 Key Takeaways:</strong><br>
+                        • Always use OAuth 2.0 for user-facing integrations<br>
+                        • Encrypt API keys at rest, use environment variables<br>
+                        • Implement JWT for stateless API authentication<br>
+                        • Always verify webhook signatures<br>
+                        • Rotate credentials regularly<br>
+                        • Monitor for unauthorized access attempts
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🔄</span>
+                        Module 2: Error Handling & Retry Logic
+                    </div>
+                    <span class="status-badge">Production Ready</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Build resilient integrations that handle failures gracefully</strong></p>
+
+                    <div class="workflow-step" style="margin-top: 3%;">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Exponential Backoff Implementation</strong>
+                            <p>The industry-standard approach for retrying failed API calls.</p>
+                            <div class="code-block">
+// Exponential backoff with jitter
+
+async function exponentialBackoff(
+  apiCall,
+  maxRetries = 5,
+  baseDelay = 1000
+) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const result = await apiCall();
+      return result;
+    } catch (error) {
+      // Don't retry on client errors (4xx)
+      if (error.response?.status >= 400 && error.response?.status < 500) {
+        throw error;
+      }
+      
+      // Last attempt - throw error
+      if (attempt === maxRetries - 1) {
+        throw error;
+      }
+      
+      // Calculate delay with exponential backoff
+      const exponentialDelay = baseDelay * Math.pow(2, attempt);
+      
+      // Add jitter (random 0-1000ms) to prevent thundering herd
+      const jitter = Math.random() * 1000;
+      const totalDelay = exponentialDelay + jitter;
+      
+      console.log(
+        `Attempt ${attempt + 1} failed. Retrying in ${totalDelay}ms...`
+      );
+      
+      await new Promise(resolve => setTimeout(resolve, totalDelay));
+    }
+  }
+}
+
+// Usage
+async function fetchCustomerData(customerId) {
+  return exponentialBackoff(async () => {
+    const response = await axios.get(
+      `https://api.example.com/customers/${customerId}`,
+      { headers: { 'Authorization': `Bearer ${token}` } }
+    );
+    return response.data;
+  });
+}
+
+// Advanced: Retry with circuit breaker
+class CircuitBreaker {
+  constructor(threshold = 5, timeout = 60000) {
+    this.failureCount = 0;
+    this.failureThreshold = threshold;
+    this.timeout = timeout;
+    this.state = 'CLOSED';  // CLOSED, OPEN, HALF_OPEN
+    this.nextAttempt = Date.now();
+  }
+  
+  async execute(apiCall) {
+    if (this.state === 'OPEN') {
+      if (Date.now() < this.nextAttempt) {
+        throw new Error('Circuit breaker is OPEN');
+      }
+      this.state = 'HALF_OPEN';
+    }
+    
+    try {
+      const result = await apiCall();
+      this.onSuccess();
+      return result;
+    } catch (error) {
+      this.onFailure();
+      throw error;
+    }
+  }
+  
+  onSuccess() {
+    this.failureCount = 0;
+    this.state = 'CLOSED';
+  }
+  
+  onFailure() {
+    this.failureCount++;
+    if (this.failureCount >= this.failureThreshold) {
+      this.state = 'OPEN';
+      this.nextAttempt = Date.now() + this.timeout;
+      console.error('Circuit breaker opened!');
+    }
+  }
+}
+
+const breaker = new CircuitBreaker();
+
+async function callWithCircuitBreaker(apiCall) {
+  return exponentialBackoff(() => breaker.execute(apiCall));
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Dead Letter Queue Setup</strong>
+                            <p>Capture failed messages for later processing and analysis.</p>
+                            <div class="code-block">
+// Dead Letter Queue with AWS SQS
+
+const AWS = require('aws-sdk');
+const sqs = new AWS.SQS({ region: 'us-east-1' });
+
+const MAIN_QUEUE_URL = process.env.MAIN_QUEUE_URL;
+const DLQ_URL = process.env.DLQ_URL;
+
+async function processMessage(message) {
+  const maxRetries = 3;
+  const retryCount = parseInt(
+    message.Attributes?.ApproximateReceiveCount || '0'
+  );
+  
+  try {
+    // Process the message
+    const data = JSON.parse(message.Body);
+    await performIntegration(data);
+    
+    // Success - delete from queue
+    await sqs.deleteMessage({
+      QueueUrl: MAIN_QUEUE_URL,
+      ReceiptHandle: message.ReceiptHandle
+    }).promise();
+    
+  } catch (error) {
+    console.error('Processing failed:', error);
+    
+    if (retryCount >= maxRetries) {
+      // Move to dead letter queue
+      await sqs.sendMessage({
+        QueueUrl: DLQ_URL,
+        MessageBody: message.Body,
+        MessageAttributes: {
+          OriginalMessageId: {
+            StringValue: message.MessageId,
+            DataType: 'String'
+          },
+          ErrorMessage: {
+            StringValue: error.message,
+            DataType: 'String'
+          },
+          FailedAt: {
+            StringValue: new Date().toISOString(),
+            DataType: 'String'
+          }
+        }
+      }).promise();
+      
+      // Delete from main queue
+      await sqs.deleteMessage({
+        QueueUrl: MAIN_QUEUE_URL,
+        ReceiptHandle: message.ReceiptHandle
+      }).promise();
+      
+      // Alert team
+      await notifyTeam(`Message moved to DLQ: ${message.MessageId}`);
+    }
+    // Otherwise, message stays in queue for retry
+  }
+}
+
+// Process DLQ messages for analysis
+async function analyzeDLQMessages() {
+  const messages = await sqs.receiveMessage({
+    QueueUrl: DLQ_URL,
+    MaxNumberOfMessages: 10,
+    MessageAttributeNames: ['All']
+  }).promise();
+  
+  if (!messages.Messages) return;
+  
+  const errorPatterns = {};
+  
+  messages.Messages.forEach(msg => {
+    const errorMsg = msg.MessageAttributes?.ErrorMessage?.StringValue;
+    errorPatterns[errorMsg] = (errorPatterns[errorMsg] || 0) + 1;
+  });
+  
+  console.log('DLQ Error Patterns:', errorPatterns);
+  
+  // Create dashboard report
+  return errorPatterns;
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Error Notification Systems</strong>
+                            <p>Alert your team when integrations fail.</p>
+                            <div class="code-block">
+// Multi-channel error notification
+
+class ErrorNotifier {
+  constructor() {
+    this.channels = {
+      slack: process.env.SLACK_WEBHOOK_URL,
+      email: process.env.ALERT_EMAIL,
+      pagerduty: process.env.PAGERDUTY_KEY
+    };
+    
+    this.severityLevels = {
+      LOW: 1,
+      MEDIUM: 2,
+      HIGH: 3,
+      CRITICAL: 4
+    };
+  }
+  
+  async notify(error, context, severity = 'MEDIUM') {
+    const alert = {
+      timestamp: new Date().toISOString(),
+      error: error.message,
+      stack: error.stack,
+      context: context,
+      severity: severity
+    };
+    
+    // Log all errors
+    console.error('Integration Error:', alert);
+    
+    // Notify based on severity
+    if (this.severityLevels[severity] >= this.severityLevels.MEDIUM) {
+      await this.sendSlackAlert(alert);
+    }
+    
+    if (this.severityLevels[severity] >= this.severityLevels.HIGH) {
+      await this.sendEmailAlert(alert);
+    }
+    
+    if (severity === 'CRITICAL') {
+      await this.triggerPagerDuty(alert);
+    }
+  }
+  
+  async sendSlackAlert(alert) {
+    const color = {
+      LOW: '#36a64f',
+      MEDIUM: '#ff9900',
+      HIGH: '#ff0000',
+      CRITICAL: '#8b0000'
+    }[alert.severity];
+    
+    await axios.post(this.channels.slack, {
+      attachments: [{
+        color: color,
+        title: `🚨 Integration Error - ${alert.severity}`,
+        text: alert.error,
+        fields: [
+          { title: 'Context', value: JSON.stringify(alert.context, null, 2), short: false },
+          { title: 'Time', value: alert.timestamp, short: true }
+        ]
+      }]
+    });
+  }
+  
+  async sendEmailAlert(alert) {
+    // Using SendGrid
+    const msg = {
+      to: this.channels.email,
+      from: 'alerts@yourcompany.com',
+      subject: `Integration Error - ${alert.severity}`,
+      html: `
+        <h2>Integration Error Detected</h2>
+        <p><strong>Severity:</strong> ${alert.severity}</p>
+        <p><strong>Error:</strong> ${alert.error}</p>
+        <p><strong>Time:</strong> ${alert.timestamp}</p>
+        <pre>${alert.stack}</pre>
+      `
+    };
+    
+    await sendgrid.send(msg);
+  }
+  
+  async triggerPagerDuty(alert) {
+    await axios.post('https://events.pagerduty.com/v2/enqueue', {
+      routing_key: this.channels.pagerduty,
+      event_action: 'trigger',
+      payload: {
+        summary: alert.error,
+        severity: 'critical',
+        source: 'Integration System',
+        custom_details: alert.context
+      }
+    });
+  }
+}
+
+// Usage
+const notifier = new ErrorNotifier();
+
+try {
+  await syncCustomerData(customerId);
+} catch (error) {
+  await notifier.notify(
+    error,
+    { customerId, operation: 'syncCustomerData' },
+    'HIGH'
+  );
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Graceful Degradation Strategies</strong>
+                            <p>Keep your system running even when integrations fail.</p>
+                            <div class="code-block">
+// Graceful degradation with fallbacks
+
+class IntegrationService {
+  constructor() {
+    this.cache = new Map();
+    this.fallbackData = {
+      // Provide reasonable defaults
+    };
+  }
+  
+  async getCustomerData(customerId) {
+    // Level 1: Try primary API
+    try {
+      const data = await this.fetchFromPrimaryAPI(customerId);
+      this.cache.set(customerId, data);  // Cache successful result
+      return data;
+    } catch (primaryError) {
+      console.warn('Primary API failed:', primaryError.message);
+      
+      // Level 2: Try backup API
+      try {
+        const data = await this.fetchFromBackupAPI(customerId);
+        this.cache.set(customerId, data);
+        return data;
+      } catch (backupError) {
+        console.warn('Backup API failed:', backupError.message);
+        
+        // Level 3: Return cached data if available
+        if (this.cache.has(customerId)) {
+          console.info('Returning cached data');
+          return {
+            ...this.cache.get(customerId),
+            _cached: true,
+            _cacheAge: Date.now() - this.cache.get(customerId)._timestamp
+          };
+        }
+        
+        // Level 4: Return minimal fallback data
+        console.warn('Returning fallback data');
+        return {
+          ...this.fallbackData,
+          id: customerId,
+          _fallback: true
+        };
+      }
+    }
+  }
+  
+  // Partial degradation - continue with available data
+  async syncAllCustomers(customerIds) {
+    const results = {
+      success: [],
+      failed: [],
+      partial: []
+    };
+    
+    for (const id of customerIds) {
+      try {
+        const data = await this.getCustomerData(id);
+        
+        if (data._fallback) {
+          results.partial.push({ id, reason: 'Using fallback data' });
+        } else if (data._cached) {
+          results.partial.push({ id, reason: 'Using cached data' });
+        } else {
+          results.success.push(id);
+        }
+      } catch (error) {
+        results.failed.push({ id, error: error.message });
+      }
+    }
+    
+    // System continues even with partial failures
+    return results;
+  }
+}
+
+// Usage with health check
+const integration = new IntegrationService();
+
+async function healthCheck() {
+  const testId = 'test-customer-123';
+  
+  try {
+    const data = await integration.getCustomerData(testId);
+    
+    if (data._fallback) {
+      return { status: 'degraded', message: 'Using fallback data' };
+    } else if (data._cached) {
+      return { status: 'degraded', message: 'Using cached data' };
+    } else {
+      return { status: 'healthy' };
+    }
+  } catch (error) {
+    return { status: 'down', error: error.message };
+  }
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight" style="margin-top: 3%;">
+                        <strong>🎯 Error Handling Best Practices:</strong><br>
+                        • Implement exponential backoff for all API calls<br>
+                        • Use circuit breakers to prevent cascading failures<br>
+                        • Set up dead letter queues for failed messages<br>
+                        • Alert teams immediately for critical errors<br>
+                        • Provide fallback data when primary sources fail<br>
+                        • Log everything for post-mortem analysis<br>
+                        • Test failure scenarios regularly
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">⚡</span>
+                        Module 3: Performance Optimization Guide
+                    </div>
+                    <span class="status-badge">Scale to Millions</span>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">Optimize integrations to handle massive scale</strong></p>
+
+                    <div class="workflow-step" style="margin-top: 3%;">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Caching Strategies</strong>
+                            <p>Reduce API calls and improve response times by 10-100x.</p>
+                            <div class="code-block">
+// Multi-layer caching strategy
+
+const Redis = require('redis');
+const NodeCache = require('node-cache');
+
+class CachingService {
+  constructor() {
+    // Layer 1: In-memory cache (fastest, limited capacity)
+    this.memoryCache = new NodeCache({ stdTTL: 60 }); // 60 seconds
+    
+    // Layer 2: Redis cache (fast, shared across instances)
+    this.redisClient = Redis.createClient({
+      host: process.env.REDIS_HOST,
+      port: 6379
+    });
+  }
+  
+  async get(key) {
+    // Try memory cache first
+    let data = this.memoryCache.get(key);
+    if (data) {
+      console.log('Cache hit: Memory');
+      return data;
+    }
+    
+    // Try Redis cache
+    data = await this.redisClient.get(key);
+    if (data) {
+      console.log('Cache hit: Redis');
+      const parsed = JSON.parse(data);
+      this.memoryCache.set(key, parsed);  // Populate memory cache
+      return parsed;
+    }
+    
+    console.log('Cache miss');
+    return null;
+  }
+  
+  async set(key, value, ttl = 3600) {
+    // Set in both caches
+    this.memoryCache.set(key, value, Math.min(ttl, 300));  // Max 5 min in memory
+    await this.redisClient.setex(key, ttl, JSON.stringify(value));
+  }
+  
+  async invalidate(key) {
+    this.memoryCache.del(key);
+    await this.redisClient.del(key);
+  }
+}
+
+// Usage with cache-aside pattern
+const cache = new CachingService();
+
+async function getCustomer(customerId) {
+  const cacheKey = `customer:${customerId}`;
+  
+  // Try cache first
+  let customer = await cache.get(cacheKey);
+  
+  if (!customer) {
+    // Cache miss - fetch from API
+    customer = await fetchCustomerFromAPI(customerId);
+    
+    // Store in cache
+    await cache.set(cacheKey, customer, 3600);  // 1 hour TTL
+  }
+  
+  return customer;
+}
+
+// Cache warming for frequently accessed data
+async function warmCache() {
+  const topCustomers = await getTopCustomers(100);
+  
+  for (const customer of topCustomers) {
+    await cache.set(`customer:${customer.id}`, customer, 7200);
+  }
+  
+  console.log('Cache warmed with top 100 customers');
+}
+
+// Intelligent cache invalidation
+async function updateCustomer(customerId, updates) {
+  // Update in database
+  const updated = await db.customers.update(customerId, updates);
+  
+  // Invalidate cache
+  await cache.invalidate(`customer:${customerId}`);
+  
+  // Update related caches
+  await cache.invalidate(`customer-list:page-*`);
+  
+  return updated;
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Batch Processing Techniques</strong>
+                            <p>Process 1000s of records efficiently instead of one-by-one.</p>
+                            <div class="code-block">
+// Batch processing with parallel execution
+
+async function batchProcess(items, batchSize = 100, concurrency = 5) {
+  const batches = [];
+  
+  // Split into batches
+  for (let i = 0; i < items.length; i += batchSize) {
+    batches.push(items.slice(i, i + batchSize));
+  }
+  
+  console.log(`Processing ${items.length} items in ${batches.length} batches`);
+  
+  // Process batches with controlled concurrency
+  const results = [];
+  
+  for (let i = 0; i < batches.length; i += concurrency) {
+    const currentBatches = batches.slice(i, i + concurrency);
+    
+    const batchResults = await Promise.all(
+      currentBatches.map(batch => processBatch(batch))
+    );
+    
+    results.push(...batchResults.flat());
+    
+    console.log(`Completed ${Math.min(i + concurrency, batches.length)}/${batches.length} batches`);
+  }
+  
+  return results;
+}
+
+async function processBatch(batch) {
+  try {
+    // Use bulk API if available
+    const response = await axios.post('https://api.example.com/bulk/create', {
+      records: batch
+    });
+    
+    return response.data.results;
+  } catch (error) {
+    // Fallback to individual processing if bulk fails
+    console.warn('Bulk processing failed, falling back to individual');
+    
+    const results = await Promise.allSettled(
+      batch.map(item => createIndividual(item))
+    );
+    
+    return results.map(r => r.status === 'fulfilled' ? r.value : null);
+  }
+}
+
+// Optimized bulk sync
+async function bulkSyncCustomers(customerIds) {
+  const startTime = Date.now();
+  
+  // Fetch in batches
+  const customers = await batchProcess(
+    customerIds,
+    100,  // 100 per batch
+    5     // 5 concurrent batches
+  );
+  
+  // Process results
+  const successful = customers.filter(c => c !== null).length;
+  const failed = customers.length - successful;
+  
+  const duration = Date.now() - startTime;
+  const rate = (customers.length / duration) * 1000;
+  
+  console.log(`
+    Sync Complete:
+    - Total: ${customers.length}
+    - Successful: ${successful}
+    - Failed: ${failed}
+    - Duration: ${duration}ms
+    - Rate: ${rate.toFixed(0)} records/second
+  `);
+  
+  return { successful, failed, customers };
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Rate Limit Handling</strong>
+                            <p>Stay under API limits while maximizing throughput.</p>
+                            <div class="code-block">
+// Token bucket rate limiter
+
+class RateLimiter {
+  constructor(tokensPerInterval, interval) {
+    this.tokensPerInterval = tokensPerInterval;
+    this.interval = interval;
+    this.tokens = tokensPerInterval;
+    this.lastRefill = Date.now();
+  }
+  
+  refill() {
+    const now = Date.now();
+    const timePassed = now - this.lastRefill;
+    const tokensToAdd = (timePassed / this.interval) * this.tokensPerInterval;
+    
+    this.tokens = Math.min(
+      this.tokensPerInterval,
+      this.tokens + tokensToAdd
+    );
+    
+    this.lastRefill = now;
+  }
+  
+  async consume(tokens = 1) {
+    this.refill();
+    
+    if (this.tokens >= tokens) {
+      this.tokens -= tokens;
+      return true;
+    }
+    
+    // Wait until tokens available
+    const waitTime = ((tokens - this.tokens) / this.tokensPerInterval) * this.interval;
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+    
+    this.tokens = 0;
+    return true;
+  }
+}
+
+// Usage: HubSpot has 100 calls per 10 seconds
+const hubspotLimiter = new RateLimiter(100, 10000);
+
+async function callHubSpotAPI(endpoint, data) {
+  await hubspotLimiter.consume();  // Wait if needed
+  
+  const response = await axios.post(
+    `https://api.hubapi.com${endpoint}`,
+    data,
+    { headers: { 'Authorization': `Bearer ${token}` } }
+  );
+  
+  return response.data;
+}
+
+// Adaptive rate limiting based on response headers
+class AdaptiveRateLimiter {
+  constructor() {
+    this.queue = [];
+    this.processing = false;
+    this.delayMs = 100;  // Start with 100ms delay
+  }
+  
+  async execute(apiCall) {
+    return new Promise((resolve, reject) => {
+      this.queue.push({ apiCall, resolve, reject });
+      this.processQueue();
+    });
+  }
+  
+  async processQueue() {
+    if (this.processing || this.queue.length === 0) return;
+    
+    this.processing = true;
+    
+    while (this.queue.length > 0) {
+      const { apiCall, resolve, reject } = this.queue.shift();
+      
+      try {
+        const response = await apiCall();
+        
+        // Adjust delay based on response headers
+        const remaining = parseInt(response.headers['x-ratelimit-remaining'] || '999');
+        const resetTime = parseInt(response.headers['x-ratelimit-reset'] || '0');
+        
+        if (remaining < 10) {
+          // Approaching limit - slow down
+          this.delayMs = Math.min(this.delayMs * 2, 5000);
+        } else if (remaining > 50) {
+          // Plenty of capacity - speed up
+          this.delayMs = Math.max(this.delayMs / 2, 10);
+        }
+        
+        resolve(response);
+      } catch (error) {
+        if (error.response?.status === 429) {
+          // Hit rate limit - back off significantly
+          const retryAfter = error.response.headers['retry-after'] || 60;
+          this.delayMs = retryAfter * 1000;
+          
+          // Re-queue the request
+          this.queue.unshift({ apiCall, resolve, reject });
+        } else {
+          reject(error);
+        }
+      }
+      
+      // Wait before next request
+      if (this.queue.length > 0) {
+        await new Promise(r => setTimeout(r, this.delayMs));
+      }
+    }
+    
+    this.processing = false;
+  }
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Database Indexing for Integrations</strong>
+                            <p>Speed up integration queries by 100-1000x with proper indexes.</p>
+                            <div class="code-block">
+// PostgreSQL indexes for integration tables
+
+-- Index on external IDs for lookups
+CREATE INDEX idx_customers_external_id ON customers(external_id);
+CREATE INDEX idx_customers_email ON customers(email);
+
+-- Composite index for common queries
+CREATE INDEX idx_customers_status_created 
+ON customers(status, created_at DESC);
+
+-- Partial index for active records only
+CREATE INDEX idx_customers_active 
+ON customers(external_id) 
+WHERE status = 'active';
+
+-- Index for JSON fields (PostgreSQL)
+CREATE INDEX idx_customers_metadata 
+ON customers USING GIN (metadata);
+
+-- Covering index to avoid table lookups
+CREATE INDEX idx_customers_lookup 
+ON customers(external_id) 
+INCLUDE (email, name, status);
+
+-- MongoDB indexes for integrations
+db.customers.createIndex(
+  { "externalId": 1 },
+  { unique: true, sparse: true }
+);
+
+db.customers.createIndex(
+  { "email": 1 },
+  { unique: true }
+);
+
+// Compound index for filtered queries
+db.customers.createIndex(
+  { "status": 1, "lastSyncedAt": -1 }
+);
+
+// Text index for search
+db.customers.createIndex(
+  { "name": "text", "company": "text" }
+);
+
+// Query optimization examples
+
+// Bad: Full table scan
+SELECT * FROM customers WHERE email LIKE '%@example.com';
+
+// Good: Uses index
+SELECT * FROM customers WHERE email = 'john@example.com';
+
+// Bad: Function prevents index use
+SELECT * FROM customers WHERE LOWER(email) = 'john@example.com';
+
+// Good: Use functional index
+CREATE INDEX idx_customers_email_lower ON customers(LOWER(email));
+SELECT * FROM customers WHERE LOWER(email) = 'john@example.com';
+
+// Analyze query performance
+EXPLAIN ANALYZE
+SELECT * FROM customers
+WHERE external_id = 'cus_123'
+  AND status = 'active';</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight" style="margin-top: 3%;">
+                        <strong>⚡ Performance Optimization Checklist:</strong><br>
+                        ✅ Implement multi-layer caching (memory + Redis)<br>
+                        ✅ Use batch processing for bulk operations<br>
+                        ✅ Respect API rate limits with token bucket algorithm<br>
+                        ✅ Create proper database indexes<br>
+                        ✅ Use async/parallel processing where possible<br>
+                        ✅ Monitor and optimize slow queries<br>
+                        ✅ Implement pagination for large datasets<br>
+                        ✅ Use compression for data transfer<br>
+                        ✅ Profile code to find bottlenecks
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🎓</span>
+                        Advanced Training Resources
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="integration-item">
+                        <strong>Recommended Reading</strong>
+                        <p>• "Designing Data-Intensive Applications" - Martin Kleppmann<br>
+                        • "Building Microservices" - Sam Newman<br>
+                        • "Release It!" - Michael Nygard<br>
+                        • API design patterns documentation (Google, Stripe, Twilio)</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Online Courses</strong>
+                        <p>• "System Design Interview" - educative.io<br>
+                        • "Microservices Architecture" - Udemy<br>
+                        • "API Security Best Practices" - Pluralsight<br>
+                        • "Redis University" - Free courses on caching</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Practice Projects</strong>
+                        <p>1. Build a multi-tenant SaaS integration platform<br>
+                        2. Create a webhook proxy with retry logic<br>
+                        3. Implement OAuth 2.0 provider from scratch<br>
+                        4. Build rate limiter as a microservice<br>
+                        5. Create integration monitoring dashboard</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Certification Paths</strong>
+                        <p>• AWS Certified Solutions Architect<br>
+                        • Google Cloud Professional Cloud Architect<br>
+                        • Salesforce Platform Developer<br>
+                        • MuleSoft Certified Integration Architect</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Setup Tab -->
+        <div id="setup" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🔧</span>
+                        Step-by-Step Setup Guide
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Audit Your SaaS Stack</strong>
+                            <p>Document all tools your company uses: CRM, marketing automation, billing, support, analytics, HR systems, and data warehouses.</p>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Map Data Flows</strong>
+                            <p>Identify how data should move between systems. Example: New Stripe customer → CRM contact → Email marketing list → Analytics dashboard</p>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Choose Integration Platform</strong>
+                            <p>Select an iPaaS (Integration Platform as a Service) that supports AI automation:</p>
+                            <div class="code-block">
+• Zapier (AI-powered workflows)
+• Make.com (visual automation)
+• Workato (enterprise AI)
+• Tray.io (advanced orchestration)
+• n8n (open-source option)</div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Implement API Strategy</strong>
+                            <p>Ensure your SaaS product has:</p>
+                            <ul>
+                                <li>RESTful API with clear documentation</li>
+                                <li>Webhooks for real-time events</li>
+                                <li>OAuth 2.0 authentication</li>
+                                <li>Rate limiting and monitoring</li>
+                                <li>API versioning strategy</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div>
+                            <strong style="color: #a5b4fc;">Set Up Monitoring</strong>
+                            <p>Deploy observability tools to track integration health, errors, and performance metrics in real-time.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Automation Tab -->
+        <div id="automation" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🤖</span>
+                        AI-Powered Integration Workflows
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="integration-item">
+                        <strong>Smart Customer Onboarding</strong>
+                        <p>When new customer signs up → AI extracts data → Creates CRM record → Sends to billing → Triggers welcome sequence → Assigns to success team based on AI scoring</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Intelligent Support Routing</strong>
+                        <p>Support ticket created → AI analyzes sentiment & urgency → Routes to appropriate team → Updates CRM → Logs in analytics → Triggers escalation if needed</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Revenue Recognition Automation</strong>
+                        <p>Stripe payment received → AI validates transaction → Updates accounting system → Syncs to data warehouse → Triggers revenue report → Notifies finance team</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Churn Prevention System</strong>
+                        <p>AI detects usage drop → Enriches with CRM data → Scores churn risk → Triggers intervention workflow → Assigns to retention specialist → Tracks outcome</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🧪</span>
+                        AI Technologies to Implement
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="highlight">
+                        <strong>Natural Language Processing (NLP)</strong><br>
+                        Parse unstructured data from emails, tickets, and documents to extract actionable information for integrations
+                    </div>
+
+                    <div class="highlight">
+                        <strong>Machine Learning Models</strong><br>
+                        Predict optimal timing for actions, customer behavior, and resource allocation across integrated systems
+                    </div>
+
+                    <div class="highlight">
+                        <strong>Computer Vision</strong><br>
+                        Extract data from documents, receipts, and images to automate data entry across platforms
+                    </div>
+
+                    <div class="highlight">
+                        <strong>LLM Integration</strong><br>
+                        Use GPT-4, Claude, or similar models to generate personalized content, summarize data, and make intelligent routing decisions
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">⚙️</span>
+                        Implementation Example
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">AI-Powered Lead Enrichment Pipeline:</strong></p>
+                    <div class="code-block">
+1. Lead enters via form submission
+2. AI extracts company info from domain
+3. Enrichment API adds firmographic data
+4. AI scores lead quality (0-100)
+5. Routes to appropriate sales rep
+6. Creates tasks in CRM
+7. Triggers personalized email sequence
+8. Logs activity in analytics platform
+9. Updates marketing attribution model</div>
+                    <p style="margin-top: 2%; font-size: 0.75rem; color: #a5b4fc;">This entire workflow runs in under 3 seconds with 99.9% accuracy.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Platforms Tab -->
+        <div id="platforms" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🔌</span>
+                        Essential Integration Categories
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="tech-grid">
+                        <div class="tech-item">
+                            <strong>CRM</strong>
+                            Salesforce, HubSpot, Pipedrive
+                        </div>
+                        <div class="tech-item">
+                            <strong>Billing</strong>
+                            Stripe, Chargebee, Recurly
+                        </div>
+                        <div class="tech-item">
+                            <strong>Support</strong>
+                            Zendesk, Intercom, Front
+                        </div>
+                        <div class="tech-item">
+                            <strong>Marketing</strong>
+                            Mailchimp, Braze, Customer.io
+                        </div>
+                        <div class="tech-item">
+                            <strong>Analytics</strong>
+                            Mixpanel, Amplitude, Segment
+                        </div>
+                        <div class="tech-item">
+                            <strong>Data Warehouse</strong>
+                            Snowflake, BigQuery, Redshift
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🚀</span>
+                        Modern Integration Architectures
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="integration-item">
+                        <strong>Event-Driven Architecture</strong>
+                        <p>Use webhooks and message queues (Kafka, RabbitMQ) to trigger real-time actions across systems when events occur</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>API-First Design</strong>
+                        <p>Build your SaaS with comprehensive APIs from day one, making integration a core feature rather than an afterthought</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Microservices Pattern</strong>
+                        <p>Decompose integrations into small, independent services that can scale and fail independently</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>GraphQL Federation</strong>
+                        <p>Create a unified API layer that aggregates data from multiple sources with intelligent caching and query optimization</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🛡️</span>
+                        Security Considerations
+                    </div>
+                </div>
+                <div class="card-content">
+                    <ul>
+                        <li><strong>Encryption:</strong> TLS 1.3 for data in transit, AES-256 for data at rest</li>
+                        <li><strong>Authentication:</strong> OAuth 2.0, API keys with rotation policies</li>
+                        <li><strong>Authorization:</strong> Role-based access control (RBAC) across integrations</li>
+                        <li><strong>Audit Logging:</strong> Track all integration activities for compliance</li>
+                        <li><strong>Data Privacy:</strong> GDPR, CCPA compliance in data transfers</li>
+                        <li><strong>Secrets Management:</strong> Use vault solutions like HashiCorp Vault or AWS Secrets Manager</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Best Practices Tab -->
+        <div id="best-practices" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">✅</span>
+                        Integration Best Practices
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="highlight">
+                        <strong>1. Start with Critical Workflows</strong><br>
+                        Don't try to integrate everything at once. Begin with workflows that have the highest ROI or biggest pain points.
+                    </div>
+
+                    <div class="highlight">
+                        <strong>2. Implement Idempotency</strong><br>
+                        Ensure integrations can safely retry failed operations without creating duplicate data or actions.
+                    </div>
+
+                    <div class="highlight">
+                        <strong>3. Use Dead Letter Queues</strong><br>
+                        Capture and analyze failed integration events to prevent data loss and identify systemic issues.
+                    </div>
+
+                    <div class="highlight">
+                        <strong>4. Version Your Integrations</strong><br>
+                        Maintain backward compatibility and allow graceful migrations when integration logic changes.
+                    </div>
+
+                    <div class="highlight">
+                        <strong>5. Monitor Everything</strong><br>
+                        Track success rates, latency, error types, and data volume across all integration points.
+                    </div>
+
+                    <div class="highlight">
+                        <strong>6. Document Integration Flows</strong><br>
+                        Maintain clear documentation of data flows, transformation rules, and error handling procedures.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">📈</span>
+                        Scaling Your Integration Infrastructure
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p><strong style="color: #a5b4fc;">As your SaaS grows, your integration strategy must evolve:</strong></p>
+                    
+                    <div class="workflow-step">
+                        <span class="workflow-arrow">→</span>
+                        <div>
+                            <strong style="color: #c4b5fd;">0-100 Customers:</strong> Direct API calls, simple automation tools like Zapier
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <span class="workflow-arrow">→</span>
+                        <div>
+                            <strong style="color: #c4b5fd;">100-1K Customers:</strong> Dedicated integration platform, webhook infrastructure, basic error handling
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <span class="workflow-arrow">→</span>
+                        <div>
+                            <strong style="color: #c4b5fd;">1K-10K Customers:</strong> Microservices architecture, message queues, advanced monitoring, AI-powered workflows
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <span class="workflow-arrow">→</span>
+                        <div>
+                            <strong style="color: #c4b5fd;">10K+ Customers:</strong> Distributed systems, multi-region deployments, real-time data streaming, predictive scaling
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🎓</span>
+                        Resources for Learning
+                    </div>
+                </div>
+                <div class="card-content">
+                    <ul>
+                        <li><strong>API Design:</strong> RESTful API Design Best Practices (openapis.org)</li>
+                        <li><strong>Webhooks:</strong> Webhook.site for testing and development</li>
+                        <li><strong>Integration Patterns:</strong> Enterprise Integration Patterns book</li>
+                        <li><strong>AI/ML:</strong> LangChain for LLM integration orchestration</li>
+                        <li><strong>Monitoring:</strong> Datadog, New Relic for observability</li>
+                        <li><strong>Communities:</strong> Join iPaaS-specific communities on Discord/Slack</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">💡</span>
+                        Pro Tips for 2026
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="integration-item">
+                        <strong>Build a "Partner Ecosystem" Strategy</strong>
+                        <p>Offer pre-built integrations with complementary SaaS tools to attract customers who already use those platforms</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Invest in Integration Marketplace</strong>
+                        <p>Create an app marketplace where third parties can build integrations, expanding your reach exponentially</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Use AI for Integration Discovery</strong>
+                        <p>Let AI analyze your customer's tech stack and automatically suggest relevant integrations</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <strong>Offer White-Label Integration Options</strong>
+                        <p>Allow enterprise customers to brand integrations as their own, increasing adoption and satisfaction</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>2026 Integration Management AI | Built for Modern SaaS Companies</p>
+            <p style="margin-top: 1%;">Stay ahead with intelligent automation and seamless integrations</p>
+        </div>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+
+            // Remove active class from all buttons
+            const tabButtons = document.getElementsByClassName('tab-btn');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+
+            // Show the selected tab and mark button as active
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Smooth scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Add touch feedback for mobile
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('touchstart', function() {
+                this.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+            });
+            card.addEventListener('touchend', function() {
+                this.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+            });
+        });
+
+        // Integration Builder Wizard
+        function updateIntegrationPlan() {
+            const source = document.getElementById('sourceTool').value;
+            const dest = document.getElementById('destTool').value;
+            const trigger = document.getElementById('triggerType').value;
+            
+            if (!source || !dest || !trigger) return;
+            
+            const planDiv = document.getElementById('integrationPlan');
+            const contentDiv = document.getElementById('planContent');
+            
+            const integrationPlans = {
+                'stripe-hubspot-new': {
+                    title: 'Stripe → HubSpot (New Payment)',
+                    steps: [
+                        'Set up Stripe webhook for payment_intent.succeeded event',
+                        'Create Zapier/Make.com trigger to catch webhook',
+                        'Extract customer data: email, name, amount',
+                        'Search for existing contact in HubSpot by email',
+                        'If not found, create new contact with customer details',
+                        'Create deal in HubSpot with payment amount',
+                        'Mark deal as "Closed Won"',
+                        'Add timeline note with payment details'
+                    ],
+                    difficulty: 'Easy',
+                    time: '30 minutes'
+                },
+                'typeform-salesforce-new': {
+                    title: 'Typeform → Salesforce (New Lead)',
+                    steps: [
+                        'Connect Typeform "New Entry" trigger',
+                        'Map form fields to Salesforce Lead fields',
+                        'Add lead source as "Typeform"',
+                        'Set lead status to "New"',
+                        'Assign to appropriate sales rep (round-robin or by territory)',
+                        'Send email notification to assigned rep',
+                        'Log activity in Salesforce timeline'
+                    ],
+                    difficulty: 'Easy',
+                    time: '20 minutes'
+                },
+                'gmail-hubspot-new': {
+                    title: 'Gmail → HubSpot (Log Email)',
+                    steps: [
+                        'Set up Gmail label trigger (e.g., "Log to CRM")',
+                        'Extract email details: from, subject, body',
+                        'Find contact in HubSpot by email address',
+                        'Create engagement note with email content',
+                        'Attach to contact timeline',
+                        'Remove Gmail label after processing',
+                        'Mark email as read (optional)'
+                    ],
+                    difficulty: 'Medium',
+                    time: '45 minutes'
+                }
+            };
+            
+            const key = `${source}-${dest}-${trigger}`;
+            let plan = integrationPlans[key];
+            
+            // Generic plan if specific combination not found
+            if (!plan) {
+                plan = {
+                    title: `${source} → ${dest}`,
+                    steps: [
+                        `Set up trigger in ${source} for ${trigger} events`,
+                        `Authenticate both ${source} and ${dest} accounts`,
+                        'Map data fields between source and destination',
+                        'Add any required data transformations',
+                        'Configure error handling',
+                        'Test with sample data',
+                        `Verify data appears correctly in ${dest}`,
+                        'Enable integration and monitor'
+                    ],
+                    difficulty: 'Medium',
+                    time: '1-2 hours'
+                };
+            }
+            
+            let html = `
+                <div style="font-weight: 600; font-size: 0.95rem; color: #e0e0e0; margin-bottom: 2%;">${plan.title}</div>
+                <div style="display: flex; gap: 3%; margin-bottom: 3%;">
+                    <span style="padding: 1% 3%; background: rgba(99, 102, 241, 0.2); border-radius: 12px; font-size: 0.75rem;">⏱️ ${plan.time}</span>
+                    <span style="padding: 1% 3%; background: rgba(34, 197, 94, 0.2); border-radius: 12px; font-size: 0.75rem;">📊 ${plan.difficulty}</span>
+                </div>
+                <div style="font-weight: 600; color: #a5b4fc; margin-bottom: 2%; font-size: 0.85rem;">Step-by-Step Instructions:</div>
+            `;
+            
+            plan.steps.forEach((step, index) => {
+                html += `
+                    <div style="display: flex; gap: 2%; margin-bottom: 2%; align-items: flex-start;">
+                        <div style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: #fff; min-width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600;">${index + 1}</div>
+                        <div style="color: #e0e0e0; font-size: 0.8rem; line-height: 1.5; flex: 1;">${step}</div>
+                    </div>
+                `;
+            });
+            
+            contentDiv.innerHTML = html;
+            planDiv.style.display = 'block';
+        }
+
+        // ROI Calculator
+        function calculateROI() {
+            const hours = parseFloat(document.getElementById('hoursPerWeek').value) || 0;
+            const rate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+            const platformCost = parseFloat(document.getElementById('platformCost').value) || 0;
+            const efficiency = parseFloat(document.getElementById('efficiency').value) / 100 || 0;
+            
+            const weeklySavings = hours * rate * efficiency;
+            const monthlySavings = weeklySavings * 4.33;
+            const annualSavings = monthlySavings * 12;
+            const annualCost = platformCost * 12;
+            const netAnnualSavings = annualSavings - annualCost;
+            const roi = annualCost > 0 ? (netAnnualSavings / annualCost).toFixed(1) : 0;
+            const paybackDays = platformCost > 0 ? Math.ceil((platformCost / monthlySavings) * 30) : 0;
+            
+            document.getElementById('monthlyCost').textContent = `$${platformCost}`;
+            document.getElementById('monthlySavings').textContent = `$${monthlySavings.toFixed(0)}`;
+            document.getElementById('annualROI').textContent = `${roi}x`;
+            document.getElementById('paybackPeriod').textContent = paybackDays > 0 ? `${paybackDays} days` : 'Immediate';
+        }
+        
+        // Initialize calculator
+        calculateROI();
+
+        // Platform Recommendation Quiz
+        function calculatePlatformScore() {
+            const q1 = document.getElementById('q1').value;
+            const q2 = document.getElementById('q2').value;
+            const q3 = document.getElementById('q3').value;
+            const q4 = document.getElementById('q4').value;
+            const q5 = document.getElementById('q5').value;
+            
+            if (!q1 || !q2 || !q3 || !q4 || !q5) return;
+            
+            let recommendation = '';
+            let reasoning = '';
+            
+            // Zapier - best for beginners
+            if (q1 === 'beginner' && q2 === '1-3' && q4 === 'no') {
+                recommendation = 'Zapier';
+                reasoning = `
+                    <strong>Why Zapier?</strong><br>
+                    • Most beginner-friendly interface<br>
+                    • Largest app ecosystem (6,000+ apps)<br>
+                    • Great for simple A-to-B workflows<br>
+                    • Excellent documentation and support<br><br>
+                    <strong>Pricing:</strong> Free tier available, paid plans from $20/month<br>
+                    <strong>Best for:</strong> Quick automations without coding
+                `;
+            }
+            // Make.com - best for visual complexity
+            else if (q4 === 'yes' && q1 !== 'beginner') {
+                recommendation = 'Make.com (formerly Integromat)';
+                reasoning = `
+                    <strong>Why Make.com?</strong><br>
+                    • Visual workflow builder with branching<br>
+                    • More affordable than Zapier for high volume<br>
+                    • Better for complex logic and transformations<br>
+                    • Great visual debugging tools<br><br>
+                    <strong>Pricing:</strong> Free tier with generous limits, paid from $9/month<br>
+                    <strong>Best for:</strong> Complex workflows with multiple paths
+                `;
+            }
+            // Workato - enterprise AI
+            else if (q2 === '10+' && q3 === 'enterprise' && q5 === 'critical') {
+                recommendation = 'Workato';
+                reasoning = `
+                    <strong>Why Workato?</strong><br>
+                    • Enterprise-grade security and compliance<br>
+                    • Built-in AI and machine learning features<br>
+                    • Best-in-class API connector development<br>
+                    • Dedicated support and success team<br><br>
+                    <strong>Pricing:</strong> Custom enterprise pricing (typically $600+/month)<br>
+                    <strong>Best for:</strong> Large organizations with complex needs
+                `;
+            }
+            // n8n - best for developers
+            else if (q1 === 'advanced' && q3 === 'free') {
+                recommendation = 'n8n';
+                reasoning = `
+                    <strong>Why n8n?</strong><br>
+                    • Open-source and self-hostable (free!)<br>
+                    • Full control over your data and infrastructure<br>
+                    • Extensive customization with code<br>
+                    • Growing community and integrations<br><br>
+                    <strong>Pricing:</strong> Free self-hosted, cloud from $20/month<br>
+                    <strong>Best for:</strong> Developers who want full control
+                `;
+            }
+            // Tray.io - best for mid-market
+            else if (q2 === '4-10' && q3 === 'standard') {
+                recommendation = 'Tray.io';
+                reasoning = `
+                    <strong>Why Tray.io?</strong><br>
+                    • Great balance of power and usability<br>
+                    • Strong API and webhook capabilities<br>
+                    • Good for growing SaaS companies<br>
+                    • Flexible pricing and scalability<br><br>
+                    <strong>Pricing:</strong> From $300/month<br>
+                    <strong>Best for:</strong> Mid-market SaaS companies scaling up
+                `;
+            }
+            // Default to Zapier
+            else {
+                recommendation = 'Zapier';
+                reasoning = `
+                    <strong>Why Zapier?</strong><br>
+                    Based on your needs, Zapier offers the best balance of ease-of-use, features, and pricing.<br><br>
+                    • Most popular platform with proven track record<br>
+                    • Easy to start, room to grow<br>
+                    • Extensive template library<br><br>
+                    <strong>Pricing:</strong> Free tier available, paid plans from $20/month
+                `;
+            }
+            
+            const resultDiv = document.getElementById('platformRecommendation');
+            const contentDiv = document.getElementById('recommendationContent');
+            
+            contentDiv.innerHTML = `
+                <div style="font-size: 1.1rem; font-weight: 600; color: #c4b5fd; margin-bottom: 3%;">
+                    ${recommendation}
+                </div>
+                <div style="font-size: 0.85rem; line-height: 1.6; color: #e0e0e0;">
+                    ${reasoning}
+                </div>
+            `;
+            
+            resultDiv.style.display = 'block';
+        }
+
+        // Troubleshooting Flowchart
+        function showTroubleshootingSteps() {
+            const issue = document.getElementById('issueType').value;
+            const stepsDiv = document.getElementById('troubleshootingSteps');
+            
+            if (!issue) {
+                stepsDiv.style.display = 'none';
+                return;
+            }
+            
+            const solutions = {
+                'nodata': {
+                    title: '🔧 No Data Syncing - Diagnostic Steps',
+                    steps: [
+                        '<strong>Check Connection Status:</strong> Verify both apps are properly connected and authorized',
+                        '<strong>Test Trigger:</strong> Manually trigger the integration to see if it fires',
+                        '<strong>Check Filters:</strong> Ensure no filters are blocking all data',
+                        '<strong>Verify Permissions:</strong> Check API scopes/permissions are sufficient',
+                        '<strong>Look at Logs:</strong> Review integration platform logs for errors',
+                        '<strong>Test with Simple Data:</strong> Try with minimal test data first'
+                    ]
+                },
+                'partial': {
+                    title: '🔧 Partial Data Syncing - Diagnostic Steps',
+                    steps: [
+                        '<strong>Check Filters/Conditions:</strong> Review any "Only if" or "Filter" steps',
+                        '<strong>Examine Field Mapping:</strong> Ensure all required fields are mapped',
+                        '<strong>Check Data Format:</strong> Verify data types match (text, number, date)',
+                        '<strong>Look for Rate Limits:</strong> Some data might be queued due to limits',
+                        '<strong>Review Error Logs:</strong> Identify patterns in what fails',
+                        '<strong>Test Edge Cases:</strong> Try with data that typically fails'
+                    ]
+                },
+                'duplicate': {
+                    title: '🔧 Duplicate Records - Diagnostic Steps',
+                    steps: [
+                        '<strong>Add Duplicate Check:</strong> Use "Find or Create" instead of "Create"',
+                        '<strong>Define Unique Identifier:</strong> Email, ID, or combination of fields',
+                        '<strong>Check for Multiple Triggers:</strong> Ensure integration only runs once',
+                        '<strong>Review Timing:</strong> Add delay if multiple webhooks fire',
+                        '<strong>Implement Idempotency:</strong> Use unique reference IDs',
+                        '<strong>Clean Existing Duplicates:</strong> Merge or delete duplicates first'
+                    ]
+                },
+                'slow': {
+                    title: '🔧 Slow Integration - Optimization Steps',
+                    steps: [
+                        '<strong>Batch Operations:</strong> Process multiple records at once instead of one-by-one',
+                        '<strong>Use Webhooks:</strong> Replace polling with real-time webhooks',
+                        '<strong>Optimize Filters:</strong> Filter early to reduce data processing',
+                        '<strong>Remove Unnecessary Steps:</strong> Streamline workflow logic',
+                        '<strong>Check Rate Limits:</strong> Ensure you\'re not being throttled',
+                        '<strong>Consider Async Processing:</strong> Use queues for heavy operations'
+                    ]
+                },
+                'error': {
+                    title: '🔧 Error Messages - Diagnostic Steps',
+                    steps: [
+                        '<strong>Read the Error:</strong> Error messages often tell you exactly what\'s wrong',
+                        '<strong>Check Authentication:</strong> Re-authorize if token expired',
+                        '<strong>Verify Field Names:</strong> API field names might have changed',
+                        '<strong>Check Required Fields:</strong> Ensure all mandatory fields are provided',
+                        '<strong>Review Rate Limits:</strong> Add delays if hitting limits',
+                        '<strong>Test in Sandbox:</strong> Use test/sandbox environments first'
+                    ]
+                },
+                'auth': {
+                    title: '🔧 Authentication Issues - Resolution Steps',
+                    steps: [
+                        '<strong>Re-authorize Connection:</strong> Disconnect and reconnect the app',
+                        '<strong>Check API Permissions:</strong> Verify OAuth scopes are correct',
+                        '<strong>Regenerate API Key:</strong> Create new API key if using token auth',
+                        '<strong>Verify IP Whitelist:</strong> Add integration platform IPs if needed',
+                        '<strong>Check Account Access:</strong> Ensure account has necessary permissions',
+                        '<strong>Review Security Settings:</strong> Some apps require security approval'
+                    ]
+                },
+                'mapping': {
+                    title: '🔧 Wrong Field Mapping - Fix Steps',
+                    steps: [
+                        '<strong>Review Field Names:</strong> Verify source and destination field names',
+                        '<strong>Check Data Types:</strong> Ensure text goes to text, numbers to numbers',
+                        '<strong>Test Transformations:</strong> Verify any formatting or calculations',
+                        '<strong>Handle Null Values:</strong> Add default values for empty fields',
+                        '<strong>Map Custom Fields:</strong> Custom fields often have special IDs',
+                        '<strong>Document Mapping:</strong> Keep a mapping reference sheet'
+                    ]
+                }
+            };
+            
+            const solution = solutions[issue];
+            let html = `<div style="padding: 3%; background: rgba(239, 68, 68, 0.1); border-radius: 8px; border-left: 3px solid #ef4444;">`;
+            html += `<h3 style="color: #fca5a5; font-size: 0.9rem; margin-bottom: 3%;">${solution.title}</h3>`;
+            
+            solution.steps.forEach((step, index) => {
+                html += `
+                    <div style="margin-bottom: 2%; padding: 2%; background: rgba(0, 0, 0, 0.2); border-radius: 6px;">
+                        <div style="color: #e0e0e0; font-size: 0.8rem; line-height: 1.5;">
+                            ${index + 1}. ${step}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+            stepsDiv.innerHTML = html;
+            stepsDiv.style.display = 'block';
+        }
+
+        // Complexity Estimator
+        function estimateComplexity() {
+            const numSystems = parseInt(document.getElementById('numSystems').value) || 2;
+            const transformComplexity = parseInt(document.getElementById('transformComplexity').value) || 1;
+            const needsCode = parseInt(document.getElementById('needsCode').value) || 0;
+            const errorHandling = parseInt(document.getElementById('errorHandling').value) || 1;
+            
+            // Calculate complexity score (1-10)
+            let score = 0;
+            score += (numSystems - 2) * 0.5; // More systems = more complex
+            score += transformComplexity * 2;
+            score += needsCode * 2;
+            score += errorHandling;
+            
+            let difficulty, time, approach;
+            
+            if (score <= 3) {
+                difficulty = 'Easy';
+                time = '2-5 hours';
+                approach = 'Use Zapier with pre-built templates. No coding required.';
+            } else if (score <= 6) {
+                difficulty = 'Medium';
+                time = '10-20 hours';
+                approach = 'Use Make.com or Zapier with custom functions and transformations.';
+            } else if (score <= 8) {
+                difficulty = 'Hard';
+                time = '30-50 hours';
+                approach = 'Consider n8n or custom code. Requires developer involvement.';
+            } else {
+                difficulty = 'Very Hard';
+                time = '50-100+ hours';
+                approach = 'Build custom integration with proper architecture. Team of developers recommended.';
+            }
+            
+            document.getElementById('difficultyLevel').textContent = difficulty;
+            document.getElementById('estimatedTime').textContent = time;
+            document.getElementById('recommendedApproach').textContent = approach;
+        }
+        
+        // Initialize complexity estimator
+        estimateComplexity();
+    </script>
+</body>
+</html>
